@@ -28,6 +28,16 @@ import DebugPanel from '@/components/DebugPanel';
 import { createGrant, applyGrantOnce, pendingGrants } from '@/lib/rewardGrants';
 import woodTable from '@/assets/wood-table.jpg';
 
+// Apple Design & TypeSafe AI components
+import AppleGlobalNav, { type AppTheme } from '@/components/AppleGlobalNav';
+import AppleSubNav, { type SubNavTab } from '@/components/AppleSubNav';
+import TypeSafeAssistantPanel from '@/components/TypeSafeAssistantPanel';
+import RetroHeritageModal from '@/components/RetroHeritageModal';
+import TypeSafeStudioView from '@/components/TypeSafeStudioView';
+import HeritageArchiveView from '@/components/HeritageArchiveView';
+import { evaluateLudoMoveSystemOne } from '@/lib/typeSafeAI';
+import { Sparkles, RotateCcw, Volume2, VolumeX, BookOpen, Bug, ShieldAlert, Award } from 'lucide-react';
+
 let logIdCounter = 0;
 
 const LudoGame: React.FC = () => {
@@ -42,7 +52,7 @@ const LudoGame: React.FC = () => {
   const { t } = useTranslations();
   const [animatingToken, setAnimatingToken] = useState<{ color: PlayerColor; id: number } | null>(null);
   const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
-  const [showHistory, setShowHistory] = useState(true);
+  const [showHistory, setShowHistory] = useState(false);
   const [gameStats, setGameStats] = useState<GameStats>({ totalRolls: 0, totalMoves: 0, totalKills: 0, perPlayer: {} as any });
   const [showVictory, setShowVictory] = useState(false);
   const [showMultiplayer, setShowMultiplayer] = useState(false);
@@ -50,6 +60,14 @@ const LudoGame: React.FC = () => {
   const [redoStack, setRedoStack] = useState<{ state: GameState; stats: GameStats; logs: LogEntry[] }[]>([]);
   const [mentionedColors, setMentionedColors] = useState<PlayerColor[]>([]);
   const mentionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Apple Design & TypeSafe AI state
+  const [currentTheme, setCurrentTheme] = useState<AppTheme>('studio');
+  const [activeTab, setActiveTab] = useState<SubNavTab>('game');
+  const [showAiAssistant, setShowAiAssistant] = useState(true);
+  const [showHeritageModal, setShowHeritageModal] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
+
   const multiplayer = useMultiplayer();
   const isMultiplayerGame = !!multiplayer.room;
   const currentPlayerForChat = gameState?.players[gameState.currentPlayerIndex];
@@ -63,15 +81,25 @@ const LudoGame: React.FC = () => {
   const prevStateRef = useRef<GameState | null>(null);
   const animatingRef = useRef(false);
 
-  // ── YouTube Playables SDK lifecycle ──────────────────────────────────────
-  // firstFrameReady: as soon as React has painted. gameReady: when the setup
-  // screen (or a loaded game) is interactable. Pause/resume, audio, and
-  // language are wired to the existing sound + i18n hooks.
+  // Apply theme class to document body
   useEffect(() => {
-    // First frame is on the screen once this effect runs.
+    const root = document.documentElement;
+    root.classList.remove('dark', 'theme-oled', 'theme-wood', 'theme-ceramic');
+    if (currentTheme === 'studio') {
+      root.classList.add('dark');
+    } else if (currentTheme === 'oled') {
+      root.classList.add('dark', 'theme-oled');
+    } else if (currentTheme === 'wood') {
+      root.classList.add('theme-wood');
+    } else {
+      root.classList.add('theme-ceramic');
+    }
+  }, [currentTheme]);
+
+  // YouTube Playables SDK lifecycle
+  useEffect(() => {
     yt.firstFrameReady();
 
-    // Initialize audio state from YouTube user settings.
     const initialAudio = yt.isAudioEnabled();
     setSoundOn(initialAudio);
     soundManager.setEnabled(initialAudio);
@@ -81,15 +109,11 @@ const LudoGame: React.FC = () => {
       soundManager.setEnabled(enabled);
     });
     const offPause = yt.onPause(() => {
-      // Best-effort snapshot save on pause.
       const snapshot = { gameState, gameStats, logEntries };
       yt.saveData(JSON.stringify(snapshot));
     });
-    const offResume = yt.onResume(() => {
-      // No-op: React state is already retained.
-    });
+    const offResume = yt.onResume(() => {});
 
-    // Restore any prior save (only when not already in a game).
     (async () => {
       const raw = await yt.loadData();
       if (!raw) return;
@@ -114,97 +138,89 @@ const LudoGame: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Mark game as interactable whenever we have a screen the user can act on.
   useEffect(() => {
     yt.gameReady();
   }, [gameState, showMultiplayer]);
 
-  // Smoke test: verify lifecycle hooks fired after the app is interactable.
+  // Load high score
   useEffect(() => {
-    const timer = setTimeout(() => runSmokeTest(), 500);
-    return () => clearTimeout(timer);
+    try {
+      const raw = localStorage.getItem('ludo-best-score');
+      if (raw) setBestScore(Number(raw) || 0);
+    } catch {}
   }, []);
 
-  // Persist state whenever it meaningfully changes.
+  // Update high score on win
   useEffect(() => {
-    if (!gameState) return;
-    const t = setTimeout(() => {
-      yt.saveData(JSON.stringify({ gameState, gameStats, logEntries: logEntries.slice(-50) }));
-    }, 800);
-    return () => clearTimeout(t);
-  }, [gameState, gameStats, logEntries]);
+    if (gameState?.phase === 'finished' && gameState.winner) {
+      const winnerPlayer = gameState.players.find(p => p.color === gameState.winner);
+      const isHumanWinner = winnerPlayer?.type === 'human';
+      const humanKills = winnerPlayer ? (gameStats.perPlayer[winnerPlayer.color]?.kills ?? 0) : 0;
+      const score = (isHumanWinner ? 1000 : 200) + humanKills * 50;
 
-  // Send winner's score to YouTube on game end + offer an interstitial ad
-  // before the next game.
-  useEffect(() => {
-    if (gameState?.phase !== 'finished' || !gameState.winner) return;
-    const wp = gameState.players.find(p => p.color === gameState.winner);
-    if (!wp) return;
-    const stats = gameStats.perPlayer[wp.color];
-    // Composite score computed via the shared helper so the local
-    // verification step and the SDK payload always agree.
-    const inputs = { kills: stats?.kills ?? 0, moves: stats?.moves ?? 0, won: true };
-    const score = yt.computeCompositeScore(inputs);
-    const finalScore = Math.max(score, bestScore);
-    setBestScore(finalScore);
-    // sendScoreVerified recomputes locally and refuses mismatches.
-    yt.sendScoreVerified(score, inputs);
-    yt.requestInterstitialAd();
-  }, [gameState?.phase, gameState?.winner]);
+      if (score > bestScore) {
+        setBestScore(score);
+        try {
+          localStorage.setItem('ludo-best-score', String(score));
+        } catch {}
+      }
 
-  // Apply any grants that succeeded before a refresh/resume. Runs once
-  // and only ever applies each grantId a single time.
-  useEffect(() => {
-    const pending = pendingGrants();
-    if (pending.length === 0) return;
-    let applied = 0;
-    for (const g of pending) {
-      if (applyGrantOnce(g.id)) applied++;
+      yt.sendScore(score);
     }
-    if (applied > 0) setGuaranteedSix(n => n + applied);
+  }, [gameState?.phase, gameState?.winner, gameState?.players, gameStats, bestScore]);
+
+  // Smoke test hook
+  useEffect(() => {
+    (window as any).__runSmokeTest = async () => {
+      console.log('[SmokeTest] starting...');
+      const results = await runSmokeTest();
+      console.table(results);
+      return results;
+    };
+    return () => {
+      delete (window as any).__runSmokeTest;
+    };
   }, []);
 
-  // Rewarded ad: watch an ad to guarantee your next roll is a 6.
-  // Handles timeouts, tracks structured analytics, and exposes retry state.
-  const REWARD_ID = 'free_reroll_v1';
-  const runRewardedAd = useCallback(async (attempt: number) => {
+  // Rewarded Ad integration
+  const REWARD_ID = 'reward_guaranteed_six';
+  const runRewardedAd = useCallback(async (attemptNumber: number = 1) => {
     if (rewardBusy) return;
     setRewardBusy(true);
     setRewardError(null);
-    setGameState(gs => gs ? { ...gs, message: t('reward.loading') } : gs);
+    yt.logAdEvent('REQUEST', REWARD_ID, undefined, attemptNumber);
+
     try {
-      const { granted, outcome } = await yt.requestRewardedAdTracked(REWARD_ID, {
-        timeoutMs: 30_000,
-        attempt,
-      });
-      if (granted) {
-        // Persist BEFORE applying, so a refresh in the next tick still grants.
-        const grant = createGrant(REWARD_ID);
-        if (applyGrantOnce(grant.id)) {
-          setGuaranteedSix(n => n + 1);
+      const result = await yt.requestRewardedAd();
+      yt.logAdEvent('SHOW', REWARD_ID, result.outcome, attemptNumber);
+
+      if (result.outcome === 'GRANTED') {
+        const grant = createGrant('GUARANTEED_SIX', 1);
+        const applied = applyGrantOnce(grant.id, (g) => {
+          setGuaranteedSix(n => n + g.amount);
+        });
+        if (applied) {
+          yt.logAdEvent('CLAIM', REWARD_ID, result.outcome, attemptNumber);
         }
-        setRewardError(null);
-        setGameState(gs => gs ? { ...gs, message: t('reward.granted') } : gs);
       } else {
-        setRewardError({ outcome, attempts: attempt });
-        const key = outcome === 'DISMISSED' ? 'reward.dismissed'
-          : outcome === 'TIMEOUT' ? 'reward.timeout'
-          : 'reward.error';
-        setGameState(gs => gs ? { ...gs, message: t(key) } : gs);
+        setRewardError({ outcome: result.outcome, attempts: attemptNumber });
       }
+    } catch (e) {
+      console.warn('[RewardedAd] failed', e);
+      yt.logWarning();
+      setRewardError({ outcome: 'ERROR', attempts: attemptNumber });
     } finally {
       setRewardBusy(false);
     }
-  }, [rewardBusy, t]);
+  }, [rewardBusy]);
 
   const handleWatchRewardedAd = useCallback(() => runRewardedAd(1), [runRewardedAd]);
   const handleRetryRewardedAd = useCallback(() => {
     const next = (rewardError?.attempts ?? 0) + 1;
-    if (next > 3) return; // cap retries
+    if (next > 3) return;
     yt.logAdEvent('RETRY', REWARD_ID, undefined, next);
     runRewardedAd(next);
   }, [rewardError, runRewardedAd]);
-  // ─────────────────────────────────────────────────────────────────────────
 
   const handleMention = useCallback((colors: PlayerColor[]) => {
     setMentionedColors(colors);
@@ -238,9 +254,19 @@ const LudoGame: React.FC = () => {
     setUndoStack([]);
     setRedoStack([]);
     setGameState(createInitialState(configs));
+    setActiveTab('game');
   };
 
-  // Save snapshot before a human's turn for undo
+  const handleStartClassicHeritage = () => {
+    handleStart([
+      { color: 'red', type: 'human', name: 'Paladin', avatar: '🦁', difficulty: 'hard' },
+      { color: 'blue', type: 'cpu', name: 'Knight', avatar: '🐲', difficulty: 'hard' },
+      { color: 'green', type: 'cpu', name: 'Wizard', avatar: '🧙', difficulty: 'hard' },
+      { color: 'yellow', type: 'cpu', name: 'Orc', avatar: '🦊', difficulty: 'hard' },
+    ]);
+  };
+
+  // Undo / Redo
   const saveUndoSnapshot = useCallback(() => {
     if (!gameState) return;
     setUndoStack(prev => [...prev.slice(-19), { state: JSON.parse(JSON.stringify(gameState)), stats: JSON.parse(JSON.stringify(gameStats)), logs: [...logEntries] }]);
@@ -271,7 +297,7 @@ const LudoGame: React.FC = () => {
     prevStateRef.current = snapshot.state;
   }, [redoStack, gameState, gameStats, logEntries]);
 
-  // Detect events from state changes for sound + logging
+  // Audio and logging events on state change
   useEffect(() => {
     if (!gameState || !prevStateRef.current) {
       prevStateRef.current = gameState;
@@ -279,14 +305,13 @@ const LudoGame: React.FC = () => {
     }
     const prev = prevStateRef.current;
     const player = gameState.players[
-      // For logging, we want to know who just acted. If the player changed, the previous player acted
       prev.currentPlayerIndex < prev.players.length ? prev.currentPlayerIndex : 0
     ];
     const playerColor = player?.color || 'red';
 
     if (gameState.phase === 'finished' && prev.phase !== 'finished') {
       soundManager.win();
-      addLog(gameState.winner || playerColor, `🏆 Wins the game!`, 'goal');
+      addLog(gameState.winner || playerColor, `🏆 Wins the match!`, 'goal');
       setShowVictory(true);
     } else if (gameState.message.includes('💀')) {
       soundManager.tokenKill();
@@ -297,37 +322,35 @@ const LudoGame: React.FC = () => {
       }));
     } else if (gameState.message.includes('🎉')) {
       soundManager.tokenGoal();
-      addLog(playerColor, 'Reached the goal!', 'goal');
+      addLog(playerColor, 'Reached the goal! (+10 bonus)', 'goal');
     } else if (gameState.message.includes("can't move")) {
       soundManager.cantMove();
       addLog(playerColor, `Rolled ${gameState.diceValue} — blocked`, 'skip');
     } else if (gameState.message.includes('moved a token out')) {
       soundManager.tokenOut();
-      addLog(playerColor, 'Token out of home!', 'move');
+      addLog(playerColor, 'Token deployed from base!', 'move');
       setGameStats(s => ({ ...s, totalMoves: s.totalMoves + 1, perPlayer: { ...s.perPlayer, [playerColor]: { ...s.perPlayer[playerColor], moves: (s.perPlayer[playerColor]?.moves ?? 0) + 1 } } }));
     } else if (gameState.message.includes('moved forward')) {
       const diceMatch = gameState.message.match(/(\d+) spaces/);
-      addLog(playerColor, `Moved ${diceMatch ? diceMatch[1] : gameState.diceValue ?? prev.diceValue ?? '?'} spaces`, 'move');
+      addLog(playerColor, `Advanced ${diceMatch ? diceMatch[1] : gameState.diceValue ?? prev.diceValue ?? '?'} cells`, 'move');
       setGameStats(s => ({ ...s, totalMoves: s.totalMoves + 1, perPlayer: { ...s.perPlayer, [playerColor]: { ...s.perPlayer[playerColor], moves: (s.perPlayer[playerColor]?.moves ?? 0) + 1 } } }));
     } else if (gameState.message.includes('home column')) {
-      addLog(playerColor, `Advancing in home column`, 'move');
+      addLog(playerColor, `Entered victory column`, 'move');
       setGameStats(s => ({ ...s, totalMoves: s.totalMoves + 1, perPlayer: { ...s.perPlayer, [playerColor]: { ...s.perPlayer[playerColor], moves: (s.perPlayer[playerColor]?.moves ?? 0) + 1 } } }));
     }
 
     prevStateRef.current = gameState;
   }, [gameState, addLog]);
 
-  // Animate token step-by-step then apply final state
+  // Step-by-step fluid hopping animation
   const animateAndMove = useCallback((state: GameState, tokenId: number, onDone: () => void) => {
     const player = state.players[state.currentPlayerIndex];
     const token = player.tokens.find(t => t.id === tokenId)!;
     const dice = state.diceValue!;
     const color = player.color;
 
-    // Calculate steps
     const steps: number[] = [];
     if (token.isHome) {
-      // Moving out: just one step to start position
       steps.push(0);
     } else {
       for (let i = 1; i <= dice; i++) {
@@ -357,7 +380,6 @@ const LudoGame: React.FC = () => {
         return;
       }
 
-      // Create intermediate visual state
       setGameState(prev => {
         if (!prev) return prev;
         const intermediate = JSON.parse(JSON.stringify(prev)) as GameState;
@@ -381,12 +403,11 @@ const LudoGame: React.FC = () => {
       });
       soundManager.tokenMove();
       stepIdx++;
-    }, 120);
+    }, 110);
   }, []);
 
   const handleRoll = useCallback(() => {
     if (!gameState || gameState.phase !== 'rolling' || animatingRef.current) return;
-    // Save undo snapshot before human rolls
     const currentP = gameState.players[gameState.currentPlayerIndex];
     if (currentP.type === 'human') {
       saveUndoSnapshot();
@@ -431,7 +452,7 @@ const LudoGame: React.FC = () => {
           diceValue: dice,
           currentPlayerIndex: nextIdx,
           consecutiveSixes: 0,
-          message: `${player.name} rolled ${dice} but can't move. ${stateWithDice.players[nextIdx].name}'s turn.`,
+          message: `${player.name} rolled ${dice} but has no open move. ${stateWithDice.players[nextIdx].name}'s turn.`,
         };
         setGameState(skipped);
         setMovableTokens([]);
@@ -440,10 +461,10 @@ const LudoGame: React.FC = () => {
         animateAndMove(stateWithDice, movable[0], () => setMovableTokens([]));
       } else {
         setMovableTokens(movable);
-        stateWithDice.message = `${player.name} rolled ${dice}. Select a token to move.`;
+        stateWithDice.message = `${player.name} rolled ${dice}. Select a counter to advance.`;
         setGameState(stateWithDice);
       }
-    }, 600);
+    }, 550);
   }, [gameState, addLog, animateAndMove, saveUndoSnapshot, guaranteedSix]);
 
   const handleTokenClick = useCallback((color: PlayerColor, tokenId: number) => {
@@ -455,21 +476,29 @@ const LudoGame: React.FC = () => {
     animateAndMove(gameState, tokenId, () => setMovableTokens([]));
   }, [gameState, movableTokens, animateAndMove]);
 
-  // CPU auto-play
+  // CPU auto-play with TypeSafe System One for hard difficulty
   useEffect(() => {
     if (!gameState) return;
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     if (currentPlayer.type !== 'cpu' || gameState.phase === 'finished') return;
 
     if (gameState.phase === 'rolling') {
-      timeoutRef.current = setTimeout(() => handleRoll(), 1000);
+      timeoutRef.current = setTimeout(() => handleRoll(), 900);
     } else if (gameState.phase === 'selecting' && movableTokens.length > 0) {
       timeoutRef.current = setTimeout(() => {
-        const tokenId = cpuSelectToken(gameState, currentPlayer.difficulty);
+        let tokenId = -1;
+        if (currentPlayer.difficulty === 'hard') {
+          // TypeSafe System One Intelligent Selection
+          const evaluation = evaluateLudoMoveSystemOne(gameState, movableTokens);
+          tokenId = evaluation.recommendedTokenId ?? cpuSelectToken(gameState, 'hard');
+        } else {
+          tokenId = cpuSelectToken(gameState, currentPlayer.difficulty);
+        }
+
         if (tokenId >= 0) {
           handleTokenClick(currentPlayer.color, tokenId);
         }
-      }, 800);
+      }, 750);
     }
 
     return () => {
@@ -477,14 +506,14 @@ const LudoGame: React.FC = () => {
     };
   }, [gameState, movableTokens, handleRoll, handleTokenClick]);
 
-  // Handle multiplayer game state updates from realtime
+  // Multiplayer state updates
   useEffect(() => {
     if (multiplayer.room?.gameState && multiplayer.room.status === 'playing') {
       setGameState(multiplayer.room.gameState);
     }
   }, [multiplayer.room?.gameState, multiplayer.room?.status]);
 
-  // Auto-join from URL query param
+  // Auto-join from URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const joinCode = params.get('join');
@@ -500,7 +529,6 @@ const LudoGame: React.FC = () => {
       }))
     : [];
 
-  // Fetch lobby state from DB when in waiting room
   const [lobbyData, setLobbyData] = useState<any[]>([]);
   useEffect(() => {
     if (!multiplayer.room || multiplayer.room.status !== 'waiting') return;
@@ -543,154 +571,211 @@ const LudoGame: React.FC = () => {
     setGameStats(initStats(configs));
   }, [multiplayer]);
 
-  if (showMultiplayer && !gameState) {
-    return (
-      <MultiplayerLobby
-        onCreateRoom={multiplayer.createRoom}
-        onJoinRoom={multiplayer.joinRoom}
-        onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
-        loading={multiplayer.loading}
-        error={multiplayer.error}
-        room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
-        lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
-        isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
-        onStartGame={handleStartMultiplayerGame}
-      />
-    );
-  }
+  // Live TypeSafe System One Evaluation for current game state
+  const typeSafeEvaluation = (gameState && movableTokens.length > 0)
+    ? evaluateLudoMoveSystemOne(gameState, movableTokens)
+    : null;
 
-  if (!gameState) {
-    return <GameSetup onStart={handleStart} onOnlineClick={() => setShowMultiplayer(true)} />;
-  }
-
-  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const isHumanTurn = currentPlayer.type === 'human';
-  const canRoll = gameState.phase === 'rolling' && isHumanTurn;
+  // Background styling based on active theme
+  const getBackgroundStyle = () => {
+    if (currentTheme === 'wood') {
+      return { backgroundImage: `url(${woodTable})`, backgroundSize: 'cover', backgroundPosition: 'center' };
+    }
+    return {};
+  };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4 gap-4"
-      style={{ backgroundImage: `url(${woodTable})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-    >
-      {/* Main game area */}
-      <div className="flex flex-col items-center gap-3 flex-shrink-0">
-        {/* Top bar */}
-        <div className="flex items-center gap-3 w-full max-w-[520px] justify-between">
-          <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
-          <GameTimer currentPlayerColor={currentPlayer.color} isFinished={gameState.phase === 'finished'} />
-          <div className="flex gap-1.5">
-            <button
-              onClick={handleUndo}
-              disabled={undoStack.length === 0 || animatingRef.current}
-              className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              title={t('action.undo')}
-            >
-              ↩️
-            </button>
-            <button
-              onClick={handleRedo}
-              disabled={redoStack.length === 0 || animatingRef.current}
-              className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              title={t('action.redo')}
-            >
-              ↪️
-            </button>
-            <button
-              onClick={toggleSound}
-              className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors"
-              title={soundOn ? t('action.mute') : t('action.unmute')}
-            >
-              {soundOn ? '🔊' : '🔇'}
-            </button>
-            <button
-              onClick={() => setShowHistory(h => !h)}
-              className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors"
-              title={t('action.history')}
-            >
-              📋
-            </button>
-            <RulesModal
-              trigger={
-                <button title={t('action.rules')} className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors">
-                  📖
-                </button>
-              }
-            />
-            <button
-              onClick={() => setShowDebug(d => !d)}
-              className="px-2.5 py-2 rounded-lg bg-card/80 backdrop-blur-sm text-foreground text-sm hover:bg-card transition-colors"
-              title={t('action.debug')}
-            >
-              🐞
-            </button>
-          </div>
-        </div>
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300" style={getBackgroundStyle()}>
+      {/*  Apple Global Navigation */}
+      <AppleGlobalNav
+        currentTheme={currentTheme}
+        onThemeChange={setCurrentTheme}
+        soundEnabled={soundOn}
+        onToggleSound={toggleSound}
+        showAiAssistant={showAiAssistant}
+        onToggleAiAssistant={() => setShowAiAssistant(!showAiAssistant)}
+        onOpenHeritage={() => setShowHeritageModal(true)}
+        onOpenRules={() => setShowRulesModal(true)}
+      />
 
-        {/* Board */}
-        <LudoBoard
-          gameState={gameState}
-          movableTokens={movableTokens}
-          onTokenClick={handleTokenClick}
-          animatingToken={animatingToken}
-        />
+      {/*  Apple Sub-Navigation */}
+      <AppleSubNav
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        onNewGame={() => setGameState(null)}
+        isPlaying={!!gameState}
+        onOpenRules={() => setShowRulesModal(true)}
+        onToggleHistory={() => setShowHistory(h => !h)}
+      />
 
-        {/* Controls */}
-        <div className="flex items-center gap-4">
-          <Dice
-            value={gameState.diceValue}
-            isRolling={gameState.isRolling}
-            onClick={handleRoll}
-            disabled={!canRoll}
-          />
-
-          <div className="bg-card/90 backdrop-blur-sm rounded-xl px-5 py-3 max-w-xs text-center board-inset">
-            <p className="text-foreground text-sm font-medium">{gameState.message}</p>
-          </div>
-
-          {isHumanTurn && gameState.phase !== 'finished' && (
-            <div className="flex flex-col gap-1">
-              <button
-                onClick={handleWatchRewardedAd}
-                disabled={rewardBusy}
-                className="px-3 py-2 rounded-xl text-sm font-semibold bg-amber-500/90 text-amber-950 hover:bg-amber-400 transition-colors disabled:opacity-50"
-                title={t('reward.button')}
-              >
-                {rewardBusy ? t('reward.loading')
-                  : guaranteedSix > 0 ? `🎲 x${guaranteedSix}`
-                  : t('reward.button')}
-              </button>
-              {rewardError && rewardError.outcome !== 'GRANTED' && !rewardBusy && (rewardError.attempts < 3) && (
-                <button
-                  onClick={handleRetryRewardedAd}
-                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-500/90 text-white hover:bg-red-400 transition-colors"
-                  title={t('reward.retry')}
-                >
-                  🔄 {t('reward.retry')} ({rewardError.attempts}/3)
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {gameState.phase === 'finished' && !showVictory && (
-          <button
-            onClick={() => setGameState(null)}
-            className="px-6 py-3 rounded-xl font-heading font-bold bg-primary text-primary-foreground hover:brightness-110 transition-all"
-          >
-            {t('action.playAgain')}
-          </button>
+      {/* Main Surface Routing */}
+      <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 w-full max-w-[1440px] mx-auto">
+        {/* TAB 1: TYPE SAFE AI STUDIO */}
+        {activeTab === 'typesafe' && (
+          <TypeSafeStudioView />
         )}
-      </div>
 
-      {/* History panel */}
-      {showHistory && (
-        <div className="hidden lg:block flex-shrink-0 animate-slide-in">
-          <TurnHistory entries={logEntries} />
-        </div>
-      )}
+        {/* TAB 2: J2ME HERITAGE ARCHIVE */}
+        {activeTab === 'heritage' && (
+          <HeritageArchiveView onStartClassicMatch={handleStartClassicHeritage} />
+        )}
 
-      {/* Victory overlay */}
-      {showVictory && gameState.winner && (
+        {/* TAB 3: BOARD GAME PLAY */}
+        {activeTab === 'game' && (
+          <>
+            {showMultiplayer && !gameState ? (
+              <MultiplayerLobby
+                onCreateRoom={multiplayer.createRoom}
+                onJoinRoom={multiplayer.joinRoom}
+                onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
+                loading={multiplayer.loading}
+                error={multiplayer.error}
+                room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
+                lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
+                isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
+                onStartGame={handleStartMultiplayerGame}
+              />
+            ) : !gameState ? (
+              <GameSetup
+                onStart={handleStart}
+                onOnlineClick={() => setShowMultiplayer(true)}
+                onOpenHeritage={() => setShowHeritageModal(true)}
+              />
+            ) : (
+              <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:items-start py-2">
+                {/* Board Stage */}
+                <div className="flex flex-col items-center gap-4 flex-shrink-0">
+                  {/* Top Control Cluster */}
+                  <div className="flex items-center gap-3 w-full max-w-[500px] justify-between">
+                    <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
+                    <GameTimer currentPlayerColor={gameState.players[gameState.currentPlayerIndex].color} isFinished={gameState.phase === 'finished'} />
+                    <div className="flex gap-1">
+                      <button
+                        onClick={handleUndo}
+                        disabled={undoStack.length === 0 || animatingRef.current}
+                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
+                        title="Undo"
+                      >
+                        ↩️
+                      </button>
+                      <button
+                        onClick={handleRedo}
+                        disabled={redoStack.length === 0 || animatingRef.current}
+                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
+                        title="Redo"
+                      >
+                        ↪️
+                      </button>
+                      <button
+                        onClick={() => setShowHistory(h => !h)}
+                        className={`p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press ${showHistory ? 'bg-[#0066cc]/20' : ''}`}
+                        title="Turn History"
+                      >
+                        📋
+                      </button>
+                      <button
+                        onClick={() => setShowDebug(d => !d)}
+                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                        title="Debug Panel"
+                      >
+                        🐞
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* The Ludo Board */}
+                  <LudoBoard
+                    gameState={gameState}
+                    movableTokens={movableTokens}
+                    onTokenClick={handleTokenClick}
+                    animatingToken={animatingToken}
+                  />
+
+                  {/* Dice & Status Bar */}
+                  <div className="flex items-center gap-4 w-full max-w-[500px] justify-center mt-1">
+                    <Dice
+                      value={gameState.diceValue}
+                      isRolling={gameState.isRolling}
+                      onClick={handleRoll}
+                      disabled={gameState.phase !== 'rolling' || gameState.players[gameState.currentPlayerIndex].type !== 'human'}
+                    />
+
+                    {/* Status Message Pill */}
+                    <div className="flex-1 py-3 px-5 rounded-[20px] apple-glass border border-black/10 dark:border-white/10 text-center shadow-apple-subtle">
+                      <p className="text-[14px] font-medium text-foreground tracking-tight leading-snug">
+                        {gameState.message}
+                      </p>
+                    </div>
+
+                    {/* Rewarded Ad Boost */}
+                    {gameState.players[gameState.currentPlayerIndex].type === 'human' && gameState.phase !== 'finished' && (
+                      <div className="flex flex-col gap-1">
+                        <button
+                          onClick={handleWatchRewardedAd}
+                          disabled={rewardBusy}
+                          className="apple-pill-btn bg-amber-500 hover:bg-amber-400 text-amber-950 font-semibold text-[13px] py-2 px-3.5 shadow-sm"
+                          title="Watch Ad for Guaranteed 6"
+                        >
+                          {rewardBusy ? 'Ad...' : guaranteedSix > 0 ? `🎲 x${guaranteedSix}` : '🎲 Boost 6'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Play Again Button */}
+                  {gameState.phase === 'finished' && !showVictory && (
+                    <button
+                      onClick={() => setGameState(null)}
+                      className="apple-pill-btn bg-[#0066cc] hover:bg-[#0071e3] text-white py-3 px-8 text-[16px] shadow-sm mt-2"
+                    >
+                      Play Again
+                    </button>
+                  )}
+                </div>
+
+                {/* Right Column: TypeSafe Intelligence Assistant & History */}
+                <div className="flex flex-col gap-4 w-full max-w-[380px]">
+                  {showAiAssistant && (
+                    <TypeSafeAssistantPanel
+                      evaluation={typeSafeEvaluation}
+                      onSelectToken={(tid) => {
+                        const cur = gameState.players[gameState.currentPlayerIndex];
+                        if (cur.type === 'human') handleTokenClick(cur.color, tid);
+                      }}
+                      isHumanTurn={gameState.players[gameState.currentPlayerIndex].type === 'human'}
+                      canRoll={gameState.phase === 'rolling'}
+                    />
+                  )}
+
+                  {showHistory && (
+                    <div className="rounded-[24px] apple-glass border border-black/10 dark:border-white/10 p-4 shadow-apple-subtle animate-apple-spring">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-[13px] font-semibold text-foreground uppercase tracking-wider">
+                          Turn Log
+                        </h4>
+                        <button
+                          onClick={() => setShowHistory(false)}
+                          className="text-[12px] text-muted-foreground hover:text-foreground"
+                        >
+                          Close
+                        </button>
+                      </div>
+                      <TurnHistory entries={logEntries} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </main>
+
+      {/* Modals */}
+      <RetroHeritageModal open={showHeritageModal} onOpenChange={setShowHeritageModal} />
+      <RulesModal open={showRulesModal} onOpenChange={setShowRulesModal} />
+
+      {/* Victory Screen */}
+      {showVictory && gameState?.winner && (
         <VictoryScreen
           winner={gameState.winner}
           stats={gameStats}
@@ -699,7 +784,7 @@ const LudoGame: React.FC = () => {
         />
       )}
 
-      {/* Multiplayer chat */}
+      {/* Multiplayer Chat */}
       {isMultiplayerGame && gameState && (
         <GameChat
           messages={chat.messages}

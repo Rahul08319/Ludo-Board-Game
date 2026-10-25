@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import type { PlayerColor, PlayerType, CpuDifficulty } from '@/lib/ludoGame';
 import { PLAYER_COLORS } from '@/lib/ludoGame';
-import { soundManager } from '@/lib/soundManager';
-import woodTable from '@/assets/wood-table.jpg';
 import Leaderboard from '@/components/Leaderboard';
+import { Play, Sparkles, Globe, Trophy, Info } from 'lucide-react';
 
 interface PlayerConfig {
   color: PlayerColor;
@@ -16,33 +15,51 @@ interface PlayerConfig {
 interface GameSetupProps {
   onStart: (configs: PlayerConfig[]) => void;
   onOnlineClick?: () => void;
+  onOpenHeritage?: () => void;
 }
 
-const AVATARS = ['👤', '🦁', '🐯', '🦊', '🐻', '🐼', '🐸', '🐵', '🦅', '🐲', '🎭', '👑', '⚔️', '🛡️', '🧙', '🏰'];
+// Authentic Avatars including J2ME 2008 Classic Heritage characters
+const AVATARS = [
+  '🦁', // Paladin (Classic J2ME Red)
+  '🐲', // Knight (Classic J2ME Blue)
+  '🧙', // Wizard (Classic J2ME Green)
+  '🦊', // Orc (Classic J2ME Yellow)
+  '👤', '🐯', '🐻', '🐼', '🦅', '👑', '⚔️', '🛡️'
+];
 
 const colorLabels: Record<PlayerColor, string> = {
-  red: 'Red', blue: 'Blue', yellow: 'Yellow', green: 'Green',
-};
-
-const colorBg: Record<PlayerColor, string> = {
-  red: 'bg-ludo-red/20 border-ludo-red',
-  blue: 'bg-ludo-blue/20 border-ludo-blue',
-  yellow: 'bg-ludo-yellow/20 border-ludo-yellow',
-  green: 'bg-ludo-green/20 border-ludo-green',
-};
-
-const colorDot: Record<PlayerColor, string> = {
-  red: 'bg-ludo-red',
-  blue: 'bg-ludo-blue',
-  yellow: 'bg-ludo-yellow',
-  green: 'bg-ludo-green',
+  red: 'Red (Paladin)',
+  blue: 'Blue (Knight)',
+  yellow: 'Yellow (Orc)',
+  green: 'Green (Wizard)',
 };
 
 const defaultAvatars: Record<PlayerColor, string> = {
-  red: '🦁', blue: '🐲', yellow: '🦊', green: '🐸',
+  red: '🦁',
+  blue: '🐲',
+  yellow: '🦊',
+  green: '🧙',
 };
 
-const GameSetup: React.FC<GameSetupProps> = ({ onStart, onOnlineClick }) => {
+const colorBorder: Record<PlayerColor, string> = {
+  red: 'focus-within:border-[#FF3B30] border-[#FF3B30]/30',
+  blue: 'focus-within:border-[#007AFF] border-[#007AFF]/30',
+  yellow: 'focus-within:border-[#FF9500] border-[#FF9500]/30',
+  green: 'focus-within:border-[#34C759] border-[#34C759]/30',
+};
+
+const colorDot: Record<PlayerColor, string> = {
+  red: 'bg-[#FF3B30]',
+  blue: 'bg-[#007AFF]',
+  yellow: 'bg-[#FF9500]',
+  green: 'bg-[#34C759]',
+};
+
+export const GameSetup: React.FC<GameSetupProps> = ({
+  onStart,
+  onOnlineClick,
+  onOpenHeritage,
+}) => {
   const [configs, setConfigs] = useState<Record<PlayerColor, { type: PlayerType; name: string; avatar: string; difficulty: CpuDifficulty }>>({
     red: { type: 'human', name: '', avatar: defaultAvatars.red, difficulty: 'medium' },
     blue: { type: 'cpu', name: '', avatar: defaultAvatars.blue, difficulty: 'medium' },
@@ -65,13 +82,17 @@ const GameSetup: React.FC<GameSetupProps> = ({ onStart, onOnlineClick }) => {
     setEditingAvatar(null);
   };
 
+  const setDifficulty = (color: PlayerColor, difficulty: CpuDifficulty) => {
+    setConfigs(prev => ({ ...prev, [color]: { ...prev[color], difficulty } }));
+  };
+
   const activePlayers = Object.values(configs).filter(t => t.type !== 'empty').length;
 
   const handleStart = () => {
     onStart(PLAYER_COLORS.map(c => ({
       color: c,
       type: configs[c].type,
-      name: configs[c].name.trim() || colorLabels[c],
+      name: configs[c].name.trim() || colorLabels[c].split(' ')[0],
       avatar: configs[c].avatar,
       difficulty: configs[c].difficulty,
     })));
@@ -81,216 +102,189 @@ const GameSetup: React.FC<GameSetupProps> = ({ onStart, onOnlineClick }) => {
     onStart(PLAYER_COLORS.map(c => ({
       color: c,
       type: 'cpu' as PlayerType,
-      name: colorLabels[c],
+      name: colorLabels[c].split(' ')[0],
       avatar: defaultAvatars[c],
       difficulty: 'hard' as CpuDifficulty,
     })));
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{ backgroundImage: `url(${woodTable})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-    >
-      <div className="w-full max-w-lg bg-card/95 backdrop-blur-sm rounded-2xl p-8 board-inset animate-slide-in">
-        <h1 className="text-3xl font-heading font-bold text-center mb-2 gold-accent">
+    <div className="w-full max-w-xl mx-auto rounded-[28px] apple-glass border border-black/10 dark:border-white/10 p-6 sm:p-8 apple-elevation select-none animate-apple-spring">
+      {/* Header */}
+      <div className="text-center space-y-1 mb-6">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:text-[#2997ff] text-[12px] font-semibold mb-1">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Apple Design & TypeSafe AI Edition</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
           Ludo & Friends
         </h1>
-        <p className="text-center text-muted-foreground mb-6 text-sm">
-          Customize players and begin
+        <p className="text-[14px] text-muted-foreground">
+          Configure player roster, choose your heritage avatars, and start your match.
         </p>
+      </div>
 
-        <div className="space-y-3 mb-6">
-          {PLAYER_COLORS.map(color => {
-            const cfg = configs[color];
-            const isActive = cfg.type !== 'empty';
+      {/* Players Setup List */}
+      <div className="space-y-3 mb-6">
+        {PLAYER_COLORS.map(color => {
+          const cfg = configs[color];
+          const isOff = cfg.type === 'empty';
 
-            return (
-              <div key={color} className={`rounded-xl border-2 ${colorBg[color]} transition-all overflow-hidden`}>
-                <div className="flex items-center gap-3 p-3">
-                  {/* Avatar button */}
+          return (
+            <div
+              key={color}
+              className={`p-3.5 rounded-2xl border transition-all duration-200 ${
+                isOff
+                  ? 'bg-black/5 dark:bg-white/5 border-transparent opacity-60'
+                  : `bg-white/60 dark:bg-white/5 ${colorBorder[color]} shadow-sm`
+              }`}
+            >
+              <div className="flex items-center justify-between gap-3">
+                {/* Left: Avatar + Color Indicator + Name */}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Avatar Picker Button */}
                   <button
-                    onClick={() => isActive && setEditingAvatar(editingAvatar === color ? null : color)}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-xl transition-all ${
-                      isActive ? 'bg-card/60 hover:bg-card/80 cursor-pointer' : 'bg-card/30 cursor-default opacity-50'
-                    }`}
-                    disabled={!isActive}
-                    title="Change avatar"
+                    onClick={() => setEditingAvatar(color)}
+                    disabled={isOff}
+                    className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-xl hover:scale-105 active:scale-95 transition-transform shrink-0"
+                    title="Change Avatar"
                   >
                     {cfg.avatar}
                   </button>
 
-                  {/* Name input or color label */}
-                  <div className="flex-1 min-w-0">
-                    {isActive ? (
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-2.5 h-2.5 rounded-full ${colorDot[color]} shrink-0`} />
+                      <span className="text-[14px] font-semibold text-foreground tracking-tight truncate">
+                        {colorLabels[color]}
+                      </span>
+                    </div>
+
+                    {!isOff && (
                       <input
                         type="text"
                         value={cfg.name}
                         onChange={e => setName(color, e.target.value)}
-                        placeholder={colorLabels[color]}
+                        placeholder={`Name (${colorLabels[color].split(' ')[0]})`}
                         maxLength={12}
-                        className="w-full bg-transparent border-b border-foreground/20 focus:border-primary outline-none text-foreground font-semibold text-sm py-1 placeholder:text-muted-foreground/50 transition-colors"
+                        className="text-[12px] bg-transparent text-foreground placeholder:text-muted-foreground/60 border-b border-black/10 dark:border-white/15 focus:outline-none focus:border-[#0066cc] w-28 sm:w-36 mt-0.5"
                       />
-                    ) : (
-                      <span className="font-semibold text-foreground/40 text-sm">{colorLabels[color]}</span>
                     )}
                   </div>
+                </div>
 
-                  {/* Type buttons */}
-                  <div className="flex gap-1.5 flex-shrink-0">
-                    {(['human', 'cpu', 'empty'] as PlayerType[]).map(type => (
-                      <button
-                        key={type}
-                        onClick={() => setType(color, type)}
-                        className={`
-                          px-2.5 py-1 rounded-lg text-xs font-medium transition-all
-                          ${cfg.type === type
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground hover:bg-secondary'
-                          }
-                        `}
-                      >
-                        {type === 'human' ? '👤' : type === 'cpu' ? '🤖' : '—'}
-                      </button>
-                    ))}
-                  </div>
+                {/* Right: Mode Selector Pills */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex bg-black/5 dark:bg-white/10 rounded-full p-0.5 text-[12px]">
+                    <button
+                      onClick={() => setType(color, 'human')}
+                      className={`px-2.5 py-1 rounded-full transition-all apple-press ${
+                        cfg.type === 'human'
+                          ? 'bg-white dark:bg-[#272729] text-foreground font-semibold shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Human
+                    </button>
+                    <button
+                      onClick={() => setType(color, 'cpu')}
+                      className={`px-2.5 py-1 rounded-full transition-all apple-press ${
+                        cfg.type === 'cpu'
+                          ? 'bg-white dark:bg-[#272729] text-foreground font-semibold shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      AI
+                    </button>
+                    <button
+                      onClick={() => setType(color, 'empty')}
+                      className={`px-2.5 py-1 rounded-full transition-all apple-press ${
+                        cfg.type === 'empty'
+                          ? 'bg-white dark:bg-[#272729] text-foreground font-semibold shadow-sm'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      Off
+                    </button>
                   </div>
 
-                  {/* Difficulty selector for CPU */}
                   {cfg.type === 'cpu' && (
-                    <div className="flex gap-1 flex-shrink-0">
-                      {(['easy', 'medium', 'hard'] as CpuDifficulty[]).map(d => (
-                        <button
-                          key={d}
-                          onClick={() => setConfigs(prev => ({ ...prev, [color]: { ...prev[color], difficulty: d } }))}
-                          className={`
-                            px-1.5 py-0.5 rounded text-[10px] font-medium transition-all
-                            ${cfg.difficulty === d
-                              ? 'bg-accent text-accent-foreground'
-                              : 'bg-muted/50 text-muted-foreground hover:bg-muted'
-                            }
-                          `}
-                        >
-                          {d === 'easy' ? '😊' : d === 'medium' ? '🧠' : '💀'}
-                        </button>
-                      ))}
-                    </div>
+                    <select
+                      value={cfg.difficulty}
+                      onChange={e => setDifficulty(color, e.target.value as CpuDifficulty)}
+                      className="text-[11px] bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 rounded-full px-2 py-1 text-foreground focus:outline-none"
+                    >
+                      <option value="easy">Easy</option>
+                      <option value="medium">Medium</option>
+                      <option value="hard">Pro</option>
+                    </select>
                   )}
-                {/* Avatar picker dropdown */}
-                {editingAvatar === color && (
-                  <div className="px-3 pb-3 animate-fade-in">
-                    <div className="flex flex-wrap gap-1.5 bg-card/50 rounded-lg p-2">
-                      {AVATARS.map(av => (
-                        <button
-                          key={av}
-                          onClick={() => setAvatar(color, av)}
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center text-lg transition-all hover:scale-110 ${
-                            cfg.avatar === av ? 'bg-primary/30 ring-2 ring-primary' : 'hover:bg-card/80'
-                          }`}
-                        >
-                          {av}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
-            );
-          })}
-        </div>
 
-        <div className="space-y-3">
-          <button
-            onClick={handleStart}
-            disabled={activePlayers < 2}
-            className="
-              w-full py-4 rounded-xl font-heading font-bold text-lg
-              bg-primary text-primary-foreground
-              hover:brightness-110 active:scale-[0.98]
-              disabled:opacity-40 disabled:cursor-not-allowed
-              transition-all duration-200
-            "
-          >
-            {activePlayers < 2 ? 'Select at least 2 players' : 'Start Game 🎲'}
-          </button>
+              {/* Avatar Selector Tray */}
+              {editingAvatar === color && (
+                <div className="mt-3 pt-3 border-t border-black/10 dark:border-white/10 flex flex-wrap gap-2 animate-apple-spring">
+                  {AVATARS.map(av => (
+                    <button
+                      key={av}
+                      onClick={() => setAvatar(color, av)}
+                      className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-lg hover:scale-120 transition-transform"
+                    >
+                      {av}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
+      {/* Main Actions */}
+      <div className="space-y-3">
+        <button
+          onClick={handleStart}
+          disabled={activePlayers < 2}
+          className="w-full apple-pill-btn bg-[#0066cc] hover:bg-[#0071e3] disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center gap-2 text-[16px] shadow-sm py-3"
+        >
+          <Play className="w-4 h-4 fill-current" />
+          <span>Start Match ({activePlayers} Players)</span>
+        </button>
+
+        <div className="grid grid-cols-2 gap-2.5">
           <button
             onClick={handleDemo}
-            className="
-              w-full py-3 rounded-xl font-heading font-semibold text-sm
-              bg-secondary text-secondary-foreground
-              hover:brightness-110 active:scale-[0.98]
-              transition-all duration-200
-            "
+            className="px-4 py-2.5 rounded-full border border-black/10 dark:border-white/15 text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press flex items-center justify-center gap-1.5"
           >
-            🤖 Watch Demo (4 CPU Players)
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>AI Auto-Match</span>
           </button>
 
           {onOnlineClick && (
             <button
               onClick={onOnlineClick}
-              className="
-                w-full py-3 rounded-xl font-heading font-semibold text-sm
-                bg-accent text-accent-foreground
-                hover:brightness-110 active:scale-[0.98]
-                transition-all duration-200
-              "
+              className="px-4 py-2.5 rounded-full border border-black/10 dark:border-white/15 text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press flex items-center justify-center gap-1.5"
             >
-              🌐 Online Multiplayer
+              <Globe className="w-3.5 h-3.5 text-[#0066cc] dark:text-[#2997ff]" />
+              <span>Multiplayer Room</span>
             </button>
           )}
         </div>
-
-        <MasterVolumeSlider />
-
-        <div className="mt-4 flex justify-center">
-          <Leaderboard
-            trigger={
-              <button className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4">
-                🏆 View Leaderboard
-              </button>
-            }
-          />
-        </div>
       </div>
-    </div>
-  );
-};
 
-const MasterVolumeSlider: React.FC = () => {
-  const [gameVol, setGameVol] = useState(soundManager.getVolume('game'));
-  const [chatVol, setChatVol] = useState(soundManager.getVolume('chat'));
-
-  useEffect(() => {
-    return soundManager.subscribe(() => {
-      setGameVol(soundManager.getVolume('game'));
-      setChatVol(soundManager.getVolume('chat'));
-    });
-  }, []);
-
-  const master = Math.round(((gameVol + chatVol) / 2) * 100);
-  const muted = gameVol === 0 && chatVol === 0;
-
-  const setMaster = (v: number) => {
-    const n = v / 100;
-    soundManager.setVolume('game', n);
-    soundManager.setVolume('chat', n);
-  };
-
-  return (
-    <div className="mt-4 flex items-center gap-2 px-1">
-      <span className="text-base" aria-hidden>{muted ? '🔇' : '🔊'}</span>
-      <span className="text-xs text-muted-foreground w-16">Master volume</span>
-      <input
-        type="range"
-        min={0}
-        max={100}
-        value={master}
-        onChange={e => setMaster(Number(e.target.value))}
-        className="flex-1 accent-primary"
-        aria-label="Master sound volume"
-      />
-      <span className="text-[10px] text-muted-foreground w-7 text-right">{master}</span>
+      {/* Retro Heritage Link */}
+      {onOpenHeritage && (
+        <div className="mt-5 text-center">
+          <button
+            onClick={onOpenHeritage}
+            className="text-[12px] text-muted-foreground hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors inline-flex items-center gap-1"
+          >
+            <Info className="w-3 h-3" />
+            <span>Explore 2008 J2ME Archive & Credits</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

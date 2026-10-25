@@ -9,13 +9,14 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1440px",
       },
     },
     extend: {
       fontFamily: {
-        heading: ["Cinzel", "serif"],
-        body: ["Inter", "sans-serif"],
+        heading: ["SF Pro Display", "-apple-system", "BlinkMacSystemFont", "system-ui", "Inter", "sans-serif"],
+        body: ["SF Pro Text", "-apple-system", "BlinkMacSystemFont", "system-ui", "Inter", "sans-serif"],
+        mono: ["SF Mono", "Menlo", "Monaco", "Courier New", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -23,6 +24,29 @@ export default {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // Apple Design System Tokens
+        apple: {
+          blue: "#0066cc",
+          "blue-focus": "#0071e3",
+          "blue-dark": "#2997ff",
+          ink: "#1d1d1f",
+          parchment: "#f5f5f7",
+          pearl: "#fafafc",
+          tile1: "#272729",
+          tile2: "#2a2a2c",
+          tile3: "#252527",
+          black: "#000000",
+          hairline: "rgba(0, 0, 0, 0.08)",
+          "hairline-dark": "rgba(255, 255, 255, 0.12)",
+          chip: "rgba(210, 210, 215, 0.64)",
+          // Apple Human Interface System Tints
+          red: "#FF3B30",
+          green: "#34C759",
+          yellow: "#FF9500",
+          orange: "#FF9500",
+          purple: "#AF52DE",
+          teal: "#5AC8FA",
+        },
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -79,9 +103,17 @@ export default {
         },
       },
       borderRadius: {
+        apple: "18px",
+        pill: "9999px",
+        squircle: "28px",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "apple-product": "rgba(0, 0, 0, 0.22) 3px 5px 30px 0px",
+        "apple-subtle": "0 2px 10px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06)",
+        "apple-glass": "0 8px 32px 0 rgba(0, 0, 0, 0.12)",
       },
       keyframes: {
         "accordion-down": {
@@ -92,10 +124,26 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "apple-spring": {
+          "0%": { transform: "scale(0.92)", opacity: "0" },
+          "50%": { transform: "scale(1.03)" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "apple-hop": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-12px)" },
+        },
+        "apple-pulse": {
+          "0%, 100%": { transform: "scale(1)", opacity: "1" },
+          "50%": { transform: "scale(1.05)", opacity: "0.85" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "apple-spring": "apple-spring 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        "apple-hop": "apple-hop 0.35s ease-in-out infinite",
+        "apple-pulse": "apple-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },

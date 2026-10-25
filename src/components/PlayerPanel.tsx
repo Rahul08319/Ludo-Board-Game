@@ -7,22 +7,22 @@ interface PlayerPanelProps {
 }
 
 const colorDot: Record<PlayerColor, string> = {
-  red: 'bg-ludo-red',
-  blue: 'bg-ludo-blue',
-  yellow: 'bg-ludo-yellow',
-  green: 'bg-ludo-green',
+  red: 'bg-[#FF3B30]',
+  blue: 'bg-[#007AFF]',
+  yellow: 'bg-[#FF9500]',
+  green: 'bg-[#34C759]',
 };
 
-const mentionRing: Record<PlayerColor, string> = {
-  red: 'ring-ludo-red shadow-[0_0_20px_hsl(var(--ludo-red))]',
-  blue: 'ring-ludo-blue shadow-[0_0_20px_hsl(var(--ludo-blue))]',
-  yellow: 'ring-ludo-yellow shadow-[0_0_20px_hsl(var(--ludo-yellow))]',
-  green: 'ring-ludo-green shadow-[0_0_20px_hsl(var(--ludo-green))]',
+const borderActive: Record<PlayerColor, string> = {
+  red: 'border-[#FF3B30] shadow-[0_0_16px_rgba(255,59,48,0.35)]',
+  blue: 'border-[#007AFF] shadow-[0_0_16px_rgba(0,122,255,0.35)]',
+  yellow: 'border-[#FF9500] shadow-[0_0_16px_rgba(255,149,0,0.35)]',
+  green: 'border-[#34C759] shadow-[0_0_16px_rgba(52,199,89,0.35)]',
 };
 
-const PlayerPanel: React.FC<PlayerPanelProps> = ({ gameState, mentionedColors = [] }) => {
+export const PlayerPanel: React.FC<PlayerPanelProps> = ({ gameState, mentionedColors = [] }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-3">
+    <div className="flex flex-wrap items-center justify-center gap-2 select-none">
       {gameState.players.map((player, idx) => {
         const isCurrent = idx === gameState.currentPlayerIndex && gameState.phase !== 'finished';
         const isMentioned = mentionedColors.includes(player.color);
@@ -32,29 +32,51 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({ gameState, mentionedColors = 
           <div
             key={player.color}
             className={`
-              flex items-center gap-2 px-3 py-2 rounded-xl border-2 transition-all
+              flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all duration-200
               ${isCurrent
-                ? 'border-primary bg-primary/10 scale-105'
-                : 'border-border bg-card/50'
+                ? `apple-glass bg-white dark:bg-[#272729] scale-105 font-semibold ${borderActive[player.color]}`
+                : 'apple-glass bg-white/40 dark:bg-white/5 border-black/5 dark:border-white/10 opacity-75 hover:opacity-100'
               }
-              ${isMentioned ? `ring-4 ring-offset-2 ring-offset-background animate-pulse ${mentionRing[player.color]}` : ''}
+              ${isMentioned ? 'ring-2 ring-primary ring-offset-1 animate-pulse' : ''}
             `}
           >
-            <span className="text-lg" title={player.name}>{player.avatar}</span>
-            <span className="font-semibold text-sm text-foreground max-w-[80px] truncate">{player.name}</span>
-            {player.type === 'cpu' && <span className="text-xs text-muted-foreground">🤖</span>}
-            <div className="flex gap-0.5 ml-1">
+            {/* Avatar glyph */}
+            <span className="text-[16px] leading-none" title={player.name}>
+              {player.avatar}
+            </span>
+
+            {/* Name */}
+            <span className="text-[13px] text-foreground max-w-[85px] truncate tracking-tight">
+              {player.name}
+            </span>
+
+            {player.type === 'cpu' && (
+              <span className="text-[10px] font-mono px-1 py-0.2 rounded-md bg-black/10 dark:bg-white/10 text-muted-foreground">
+                AI
+              </span>
+            )}
+
+            {/* Token dots */}
+            <div className="flex items-center gap-1 ml-0.5">
               {player.tokens.map(t => (
                 <div
                   key={t.id}
-                  className={`w-2 h-2 rounded-full ${
-                    t.isGoal ? 'bg-primary' : t.isHome ? 'bg-muted-foreground/30' : colorDot[player.color]
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    t.isGoal
+                      ? 'bg-amber-400 scale-110 shadow-[0_0_4px_rgba(251,191,36,0.8)]'
+                      : t.isHome
+                      ? 'bg-black/15 dark:bg-white/15'
+                      : `${colorDot[player.color]} shadow-sm`
                   }`}
+                  title={t.isGoal ? 'At Goal' : t.isHome ? 'In Yard' : `Step ${t.position}`}
                 />
               ))}
             </div>
+
             {tokensGoal > 0 && (
-              <span className="text-xs text-primary font-bold">{tokensGoal}⭐</span>
+              <span className="text-[11px] font-bold text-amber-500 flex items-center">
+                {tokensGoal}★
+              </span>
             )}
           </div>
         );
