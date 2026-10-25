@@ -17,6 +17,7 @@ import RulesModal from '@/components/RulesModal';
 import TurnHistory, { type LogEntry } from '@/components/TurnHistory';
 import VictoryScreen, { type GameStats } from '@/components/VictoryScreen';
 import MultiplayerLobby from '@/components/MultiplayerLobby';
+import { MultiplayerErrorBoundary } from '@/components/MultiplayerErrorBoundary';
 import GameTimer from '@/components/GameTimer';
 import GameChat from '@/components/GameChat';
 import { useMultiplayer } from '@/hooks/useMultiplayer';
@@ -265,6 +266,26 @@ const LudoGame: React.FC = () => {
       { color: 'yellow', type: 'cpu', name: 'Orc', avatar: '🦊', difficulty: 'hard' },
     ]);
   };
+
+  const handleStartPassAndPlay = useCallback(() => {
+    setShowMultiplayer(false);
+    handleStart([
+      { color: 'red', type: 'human', name: 'Player 1 (Red)', avatar: '🔴' },
+      { color: 'green', type: 'human', name: 'Player 2 (Green)', avatar: '🟢' },
+      { color: 'yellow', type: 'human', name: 'Player 3 (Yellow)', avatar: '🟡' },
+      { color: 'blue', type: 'human', name: 'Player 4 (Blue)', avatar: '🔵' },
+    ]);
+  }, []);
+
+  const handleStartSoloAI = useCallback(() => {
+    setShowMultiplayer(false);
+    handleStart([
+      { color: 'red', type: 'human', name: 'You (Champion)', avatar: '👑' },
+      { color: 'blue', type: 'cpu', name: 'TypeSafe AI 1', avatar: '🤖', difficulty: 'hard' },
+      { color: 'green', type: 'cpu', name: 'TypeSafe AI 2', avatar: '🧠', difficulty: 'hard' },
+      { color: 'yellow', type: 'cpu', name: 'TypeSafe AI 3', avatar: '⚡', difficulty: 'hard' },
+    ]);
+  }, []);
 
   // Undo / Redo
   const saveUndoSnapshot = useCallback(() => {
@@ -624,17 +645,27 @@ const LudoGame: React.FC = () => {
         {activeTab === 'game' && (
           <>
             {showMultiplayer && !gameState ? (
-              <MultiplayerLobby
-                onCreateRoom={multiplayer.createRoom}
-                onJoinRoom={multiplayer.joinRoom}
+              <MultiplayerErrorBoundary
                 onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
-                loading={multiplayer.loading}
-                error={multiplayer.error}
-                room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
-                lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
-                isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
-                onStartGame={handleStartMultiplayerGame}
-              />
+                onStartPassAndPlay={handleStartPassAndPlay}
+                onStartSoloAI={handleStartSoloAI}
+                onOpenDebug={() => setShowDebug(true)}
+              >
+                <MultiplayerLobby
+                  onCreateRoom={multiplayer.createRoom}
+                  onJoinRoom={multiplayer.joinRoom}
+                  onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
+                  loading={multiplayer.loading}
+                  error={multiplayer.error}
+                  room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
+                  lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
+                  isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
+                  onStartGame={handleStartMultiplayerGame}
+                  onStartPassAndPlay={handleStartPassAndPlay}
+                  onStartSoloAI={handleStartSoloAI}
+                  onOpenDebug={() => setShowDebug(true)}
+                />
+              </MultiplayerErrorBoundary>
             ) : !gameState ? (
               <GameSetup
                 onStart={handleStart}

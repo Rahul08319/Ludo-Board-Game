@@ -5,13 +5,29 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// Safely probe localStorage so sandboxed iframes or restricted contexts never throw during import
+function getSafeLocalStorage(): Storage | undefined {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const probeKey = '__sb_probe__';
+      window.localStorage.setItem(probeKey, probeKey);
+      window.localStorage.removeItem(probeKey);
+      return window.localStorage;
+    }
+  } catch {
+    // Blocked by sandbox or security restrictions
+  }
+  return undefined;
+}
+
+const safeAuthStorage = getSafeLocalStorage();
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
-
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
+    storage: safeAuthStorage,
+    persistSession: !!safeAuthStorage,
+    autoRefreshToken: !!safeAuthStorage,
   }
 });

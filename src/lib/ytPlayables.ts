@@ -170,6 +170,89 @@ export function logWarning() {
   try { yt()?.health.logWarning(); } catch {}
 }
 
+// ── ytgame.health Diagnostics & Failure Logging ──────────────────────────
+export type HealthEventType =
+  | 'STORAGE_ACCESS_BLOCKED'
+  | 'STORAGE_QUOTA_EXCEEDED'
+  | 'MULTIPLAYER_INIT_FAILED'
+  | 'MULTIPLAYER_ROOM_ERROR'
+  | 'MULTIPLAYER_SYNC_FAILED'
+  | 'REALTIME_CHANNEL_FAILED';
+
+export interface HealthLogEntry {
+  id: string;
+  timestamp: number;
+  type: HealthEventType;
+  level: 'warning' | 'error';
+  message: string;
+  details?: Record<string, any>;
+}
+
+const healthLog: HealthLogEntry[] = [];
+let lastHealthEvent: HealthLogEntry | null = null;
+
+export function getHealthLog(): HealthLogEntry[] {
+  return healthLog.slice();
+}
+
+export function getLastHealthEvent(): HealthLogEntry | null {
+  return lastHealthEvent;
+}
+
+export function logHealthWarning(
+  type: HealthEventType,
+  message: string,
+  details?: Record<string, any>
+): HealthLogEntry {
+  const entry: HealthLogEntry = {
+    id: `hw_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    timestamp: Date.now(),
+    type,
+    level: 'warning',
+    message,
+    details,
+  };
+  healthLog.push(entry);
+  if (healthLog.length > 50) healthLog.shift();
+  lastHealthEvent = entry;
+
+  // Signal YouTube Playables health monitoring
+  try { yt()?.health.logWarning(); } catch {}
+
+  console.warn(`[ytgame:health:warning] ${type}: ${message}`, details ?? '');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('ytgame:healthevent', { detail: entry }));
+  }
+  return entry;
+}
+
+export function logHealthError(
+  type: HealthEventType,
+  message: string,
+  details?: Record<string, any>
+): HealthLogEntry {
+  const entry: HealthLogEntry = {
+    id: `he_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    timestamp: Date.now(),
+    type,
+    level: 'error',
+    message,
+    details,
+  };
+  healthLog.push(entry);
+  if (healthLog.length > 50) healthLog.shift();
+  lastHealthEvent = entry;
+
+  // Signal YouTube Playables health monitoring
+  try { yt()?.health.logError(); } catch {}
+
+  console.error(`[ytgame:health:error] ${type}: ${message}`, details ?? '');
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('ytgame:healthevent', { detail: entry }));
+  }
+  return entry;
+}
+
 // ── Ad engagement analytics ─────────────────────────────────────────────
 // Structured events funneled through ytgame.health for post-release
 // monitoring. Every event carries a timestamp + outcome code so the
