@@ -149,33 +149,80 @@
 }
 
 @layer utilities {
-  /* Apple Liquid Glass Material */
+  /* Apple Liquid Glass Material with 8K sub-pixel fidelity */
   .apple-glass {
     background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .dark .apple-glass, .theme-oled .apple-glass {
-    background: rgba(30, 30, 32, 0.75);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(30, 30, 32, 0.78);
+    backdrop-filter: blur(24px) saturate(190%);
+    -webkit-backdrop-filter: blur(24px) saturate(190%);
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
   }
 
-  /* Apple signature product elevation */
+  /* Museum Gallery 8K Product Elevation */
   .apple-elevation {
-    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+    box-shadow: 
+      0 32px 64px -16px rgba(0, 0, 0, 0.24),
+      0 16px 32px -8px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark .apple-elevation, .theme-oled .apple-elevation {
+    box-shadow: 
+      0 32px 64px -16px rgba(0, 0, 0, 0.6),
+      0 16px 32px -8px rgba(0, 0, 0, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.08);
   }
 
   .apple-elevation-subtle {
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
   }
 
-  /* Apple Press Interaction */
+  /* 8K Machined Aluminum Bezel for Board Chassis */
+  .apple-chassis-8k {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 240, 245, 0.9));
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 
+      inset 0 1px 2px rgba(255, 255, 255, 0.9),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+      0 24px 48px -12px rgba(0, 0, 0, 0.22);
+  }
+
+  .dark .apple-chassis-8k, .theme-oled .apple-chassis-8k {
+    background: linear-gradient(145deg, #2c2c2e, #1c1c1e);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 
+      inset 0 1px 1px rgba(255, 255, 255, 0.18),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.5),
+      0 28px 56px -12px rgba(0, 0, 0, 0.7);
+  }
+
+  /* 8K Optical Specular Highlights & Glint */
+  .specular-sheen {
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 40%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 60%,
+      transparent 100%
+    );
+  }
+
+  /* Apple Press Interaction (Critically Damped WWDC 2018 feel) */
   .apple-press {
-    transition: transform 120ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 140ms ease-out;
   }
   .apple-press:active {
     transform: scale(0.95);
@@ -187,7 +234,7 @@
     padding: 10px 22px;
     font-size: 15px;
     font-weight: 600;
-    transition: all 150ms ease-out;
+    transition: all 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .apple-pill-btn:active {
     transform: scale(0.95);
@@ -198,12 +245,38 @@
     border-radius: 28px;
   }
 
-  .token-shadow {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  /* 8K Realistic Token Contact Shadow */
+  .token-contact-shadow {
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.35),
+      0 8px 20px -2px rgba(0, 0, 0, 0.28),
+      inset 0 1.5px 2px rgba(255, 255, 255, 0.85);
   }
 
-  .dice-3d {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  .token-shadow-lifted {
+    box-shadow:
+      0 14px 28px -4px rgba(0, 0, 0, 0.38),
+      0 6px 12px rgba(0, 0, 0, 0.25),
+      inset 0 2px 3px rgba(255, 255, 255, 0.95);
+  }
+
+  /* 8K Ivory Resin Dice Surface */
+  .dice-ivory-8k {
+    background: radial-gradient(circle at 35% 30%, #ffffff 0%, #f7f7f9 60%, #ececef 100%);
+    box-shadow: 
+      0 12px 28px -4px rgba(0, 0, 0, 0.18),
+      0 4px 8px rgba(0, 0, 0, 0.08),
+      inset 0 2px 2px rgba(255, 255, 255, 1),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .dark .dice-ivory-8k, .theme-oled .dice-ivory-8k {
+    background: radial-gradient(circle at 35% 30%, #3a3a3c 0%, #2c2c2e 60%, #222224 100%);
+    box-shadow: 
+      0 12px 28px -4px rgba(0, 0, 0, 0.5),
+      0 4px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1.5px 1.5px rgba(255, 255, 255, 0.22),
+      inset 0 -2px 3px rgba(0, 0, 0, 0.4);
   }
 
   .board-inset {

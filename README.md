@@ -2,20 +2,22 @@
 
 #  Ludo & Friends Pro
 
-### The Timeless Classic Reimagined Through Apple’s Fluid Design System & TypeSafe System One Intelligence
+### The Timeless Classic Reimagined Through Apple’s Fluid Design System, 8K Optical Fidelity & TypeSafe System One Intelligence
 
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Apple Design](https://img.shields.io/badge/Apple_Design-Fluid_HIG-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/design/)
+[![Apple HIG](https://img.shields.io/badge/Apple_Design-Fluid_HIG_(WWDC)-000000?style=for-the-badge&logo=apple&logoColor=white)](https://developer.apple.com/design/)
 [![TypeSafe AI](https://img.shields.io/badge/TypeSafe_AI-System_One_(Jev)-0066CC?style=for-the-badge)](https://typesafe.ai)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-3.2_Passing_(9/9)-FCC72B?style=for-the-badge&logo=vitest&logoColor=black)](https://vitest.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4_Glassmorphism-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![YouTube Playables](https://img.shields.io/badge/YouTube-Playables_Certified-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://developers.google.com/youtube/gaming/playables)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 <br/>
 
 > *"When we align the interface to the way we think and move, something magical happens — it stops feeling like a computer and starts feeling like a seamless extension of us."*  
-> — **Apple Human Interface & Fluid Interface Design**
+> — **Apple Human Interface & Fluid Interface Design (WWDC 2018–2026)**
 
 <br/>
 
@@ -25,196 +27,240 @@
 
 ## ✦ Table of Contents
 
-- [Vision & Architectural Philosophy](#-vision--architectural-philosophy)
-- [Apple Design System & Fluid Motion Engine](#-apple-design-system--fluid-motion-engine)
-- [TypeSafe System One: Evaluation & Routing Pattern](#-typesafe-system-one-evaluation--routing-pattern)
-- [2008 J2ME Retro Heritage: ANYPLAYS™ Preservation](#-2008-j2me-retro-heritage-anyplays-preservation)
-- [Official Game Rules & Mathematical Matrix](#-official-game-rules--mathematical-matrix)
-- [Features & Capabilities](#-features--capabilities)
-- [Project Architecture & File Map](#-project-architecture--file-map)
-- [Getting Started & Local Development](#-getting-started--local-development)
-- [YouTube Playables Certified Lifecycle](#-youtube-playables-certified-lifecycle)
-- [Credits & Historical Acknowledgments](#-credits--historical-acknowledgments)
+- [🌟 Vision & Architectural Philosophy](#-vision--architectural-philosophy)
+- [🧠 TypeSafe System One: Evaluation & Routing Pattern](#-typesafe-system-one-evaluation--routing-pattern)
+- [🍏 Apple Design System & 8K Visual Engine](#-apple-design-system--8k-visual-engine)
+- [🏛️ 2008 J2ME Retro Heritage: ANYPLAYS™ Preservation](#️-2008-j2me-retro-heritage-anyplays-preservation)
+- [🛡️ Multiplayer Resilience & Sandboxed Storage Architecture](#️-multiplayer-resilience--sandboxed-storage-architecture)
+- [🎲 Official Game Rules & Mathematical Matrix](#-official-game-rules--mathematical-matrix)
+- [📁 Project Architecture & File Map](#-project-architecture--file-map)
+- [🚀 Getting Started & Local Development](#-getting-started--local-development)
+- [📺 YouTube Playables Certified Lifecycle](#-youtube-playables-certified-lifecycle)
+- [📜 Historical Credits & License](#-historical-credits--license)
 
 ---
 
 ## 🌟 Vision & Architectural Philosophy
 
 **Ludo & Friends Pro** bridges almost two decades of interactive entertainment:
-1. **The 2008 Java ME Classic Heritage:** Faithfully preserving the beloved mechanics and whimsical soul of *Ludo & Friends 1.0* by **ANYPLAYS™** (Movilenio Servicios Móviles S.L.), originally built for Nokia Symbian, Sony Ericsson, and BlackBerry devices.
-2. **Apple’s Fluid Design System:** Re-engineered from the ground up as a museum-grade digital product adhering strictly to Apple's Human Interface Guidelines (WWDC 2018–2026), featuring Liquid Glass translucency, critically damped spring physics, SF Pro Display negative tracking, and Action Blue (`#0066cc`) interaction grammar.
-3. **TypeSafe System One AI Intelligence:** Powered by TypeSafe’s flagship **Jev** System One model architecture, transforming raw board states into typed judgments, calibrated probabilities, and real-time strategic routing without generative latency.
 
 ```
-       ┌─────────────────────────────────────────────────────────────┐
-       │                    LUDO & FRIENDS PRO                     │
-       └──────────────────────────────┬──────────────────────────────┘
-                                      │
-         ┌────────────────────────────┼────────────────────────────┐
-         │                            │                            │
-         ▼                            ▼                            ▼
-┌──────────────────┐        ┌──────────────────┐        ┌──────────────────┐
-│  APPLE DESIGN    │        │  TYPESAFE AI     │        │  J2ME RETRO      │
-│  FLUID SYSTEM    │        │  SYSTEM ONE      │        │  ANYPLAYS (2008) │
-├──────────────────┤        ├──────────────────┤        ├──────────────────┤
-│• SF Pro Display  │        │• Jev Model v1    │        │• Paladin / Knight│
-│• Liquid Glass    │        │• Choice / Score  │        │• Wizard / Orc    │
-│• Action Blue     │        │• Noul Conditions │        │• Impassable Wall │
-│• Critically      │        │• Tactical Route  │        │• +20 Kill Bonus  │
-│  Damped Springs  │        │  Arbitration     │        │• +10 Goal Bonus  │
-└──────────────────┘        └──────────────────┘        └──────────────────┘
+        ┌─────────────────────────────────────────────────────────────┐
+        │                    LUDO & FRIENDS PRO                     │
+        │      8K Optical Physics • TypeSafe AI • 2008 J2ME Retro     │
+        └──────────────────────────────┬──────────────────────────────┘
+                                       │
+         ┌─────────────────────────────┼─────────────────────────────┐
+         │                             │                             │
+         ▼                             ▼                             ▼
+┌──────────────────┐         ┌──────────────────┐         ┌──────────────────┐
+│  APPLE DESIGN    │         │  TYPESAFE AI     │         │  J2ME RETRO      │
+│  FLUID SYSTEM    │         │  SYSTEM ONE      │         │  ANYPLAYS (2008) │
+├──────────────────┤         ├──────────────────┤         ├──────────────────┤
+│• SF Pro Display  │         │• Jev Model v1    │         │• Paladin (Red)   │
+│• Liquid Glass    │         │• Choice / Score  │         │• Knight (Blue)   │
+│• Action Blue     │         │• Noul Conditions │         │• Wizard (Green)  │
+│• Critically      │         │• Tactical Route  │         │• Orc (Yellow)    │
+│  Damped Springs  │         │  Arbitration     │         │• Impassable Wall │
+│• 8K Ivory Dice   │         │• Fan-Out Query   │         │• +20 Kill Bounty │
+│• Specular Sheens │         │• Social Safety   │         │• +10 Goal Bounty │
+└──────────────────┘         └──────────────────┘         └──────────────────┘
 ```
 
----
-
-## 🍏 Apple Design System & Fluid Motion Engine
-
-This application implements Apple's Web Design System specifications down to the pixel:
-
-### 1. Color System & Surface Alternation
-- **Action Blue (`#0066cc`, focus: `#0071e3`, dark: `#2997ff`):** The singular brand interactive accent. Every "click me" signal, active pill, and focus indicator routes through Action Blue.
-- **Parchment (`#f5f5f7`):** The signature Apple off-white canvas for light surfaces.
-- **Near-Black Ink (`#1d1d1f`):** Used for typography on light surfaces to deliver photographic warmth rather than printed black.
-- **Apple Studio Dark (`#19191b` / `#272729` Tile 1):** Museum gallery dark canvas where the product takes center stage.
-- **Pure Black Void (`#000000`):** Pinned to the 44px `AppleGlobalNav` top bar and Pro OLED mode.
-- **Apple Human Interface System Tints:**
-  - Red: `#FF3B30` (Paladin)
-  - Blue: `#007AFF` (Knight)
-  - Green: `#34C759` (Wizard)
-  - Amber / Orange: `#FF9500` (Orc)
-
-### 2. Typographic Hierarchy
-| Role | Font Family | Size | Weight | Line Height | Tracking | Purpose |
-|---|---|---|---|---|---|---|
-| **Hero Display** | SF Pro Display | 40px–56px | 600 | 1.07 | `-0.028em` | Hero section headlines |
-| **Tagline** | SF Pro Display | 21px | 600 | 1.19 | `-0.231px` | Product sub-nav title |
-| **Body (Apple Signature)** | SF Pro Text | 17px | 400 | 1.47 | `-0.015em` | Reading rhythm, descriptions |
-| **Pill Buttons** | SF Pro Text | 14px–15px | 600 | 1.00 | `0` | Action Blue capsule pills |
-| **Telemetry / Mono** | SF Mono | 11px–12px | 400 | 1.20 | `0` | TypeSafe AI JSON & scores |
-
-> **Note on Tracking:** Large headlines strictly employ negative letter-spacing (`-0.022em` to `-0.028em`) to achieve the iconic "Apple tight" display cadence.
-
-### 3. Physics & Fluid Motion (`apple-design-fluid`)
-- **Latency Elimination:** Immediate feedback on pointer-down (`active:scale-95`), never waiting for pointer-up.
-- **Critically Damped Springs:** Configured at damping ratio `1.0` (response `0.35s`) for UI transitions, preventing disruptive oscillation.
-- **Momentum Springs:** Damping ratio `0.8` for momentum events such as 3D dice tosses and token hop strides.
-- **Liquid Glass Materials:** `backdrop-filter: blur(20px) saturate(180%)` paired with a translucent white border-top highlight representing light catching the glass bevel.
-- **Single Product Elevation:** Elevation follows Apple's rule: exactly one soft drop shadow under the board surface (`rgba(0, 0, 0, 0.22) 3px 5px 30px 0px`).
+1. **The 2008 Java ME Classic Heritage:** Faithfully preserving the mechanics and soul of *Ludo & Friends 1.0* by **ANYPLAYS™** (Movilenio Servicios Móviles S.L.), originally built for Nokia Symbian, Sony Ericsson, and BlackBerry devices.
+2. **Apple’s Fluid Design System:** Re-engineered as a museum-grade digital product adhering strictly to Apple's Human Interface Guidelines, featuring Liquid Glass translucency, critically damped spring physics, SF Pro Display negative letter-spacing, and Action Blue (`#0066cc`) interaction grammar.
+3. **TypeSafe System One AI Intelligence:** Powered by TypeSafe’s flagship **Jev** System One model architecture, transforming raw board states into typed judgments, calibrated probabilities, and real-time strategic routing without generative LLM latency.
 
 ---
 
 ## 🧠 TypeSafe System One: Evaluation & Routing Pattern
 
-Rather than delegating game moves to slow, unstructured large language model prompts, **Ludo & Friends Pro** leverages **TypeSafe System One models (Jev)**. System One provides fast, calibrated, typed judgments usable as programming primitives.
+Rather than generating unstructured text or suffering from LLM hallucination and latency, **Ludo & Friends Pro** utilizes TypeSafe's **System One (Jev)** models. System One returns fast, typed judgments that software can consume directly as programming primitives.
+
+### 1. Architectural Sequence
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│                     TYPESAFE SYSTEM ONE ARCHITECTURE                   │
-└────────────────────────────────────────────────────────────────────────┘
-
-  [ Game Board State ] ──▶ [ extractSystemOneState() ]
-                                    │
-                                    ▼
-                 ┌──────────────────────────────────────┐
-                 │   TYPESAFE JEV SYSTEM ONE ENGINE     │
-                 ├──────────────────────────────────────┤
-                 │ • Choice: Strategic Route Selection  │
-                 │ • Score:  5-Point Risk Dimension     │
-                 │ • Noul:   Kill / Wall Probabilities  │
-                 └──────────────────┬───────────────────┘
-                                    │
-           ┌────────────────────────┼────────────────────────┐
-           ▼                        ▼                        ▼
-┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐
-│  AI STRATEGIC MOVE  │  │ REAL-TIME ASSISTANT │  │  SOCIAL SENTIMENT   │
-│  EXECUTION          │  │ TELEMETRY OVERLAY   │  │  & SAFETY ROUTING   │
-└─────────────────────┘  └─────────────────────┘  └─────────────────────┘
+ Game State (Raw)
+       │
+       ▼
+ [ State Extractor ] ──► SystemOneBoardState JSON
+                                │
+                                ▼
+ ┌─────────────────────────────────────────────────────────────┐
+ │           TypeSafe Jev System One Speculative Fan-Out       │
+ ├─────────────────────────────────────────────────────────────┤
+ │ • Noul  : is_kill_opportunity (Probability: 0.0 - 1.0)       │
+ │ • Noul  : is_wall_formation   (Probability: 0.0 - 1.0)       │
+ │ • Noul  : is_safe_refuge      (Probability: 0.0 - 1.0)       │
+ │ • Score : counter_threat_risk (Levels 1-5: NEGLIGIBLE..CRIT)│
+ │ • Score : match_tension       (Levels 1-5: Relaxed..Decisive)│
+ └──────────────────────────────┬──────────────────────────────┘
+                                │
+                                ▼
+                [ Strategic Route Arbitration ]
+               (TypeSafe Choice: StrategicRoute)
+                                │
+         ┌──────────────────────┼──────────────────────┐
+         ▼                      ▼                      ▼
+  OFFENSIVE_STRIKE        FORTIFY_WALL             GOAL_RUSH
+ (+20 cell bonus)     (Impassable Blockade)    (Victory Corridor)
+         │                      │                      │
+         └──────────────────────┼──────────────────────┘
+                                │
+                                ▼
+        [ High-Utility Move Routed & Executed by Engine ]
 ```
 
-### The Three Foundational Primitives
+### 2. The Core TypeSafe Primitives
 
-#### 1. Choice Primitive (Categorical Route Selection)
-Evaluates candidate actions across six defined strategic playbooks:
-```typescript
-type StrategicRoute =
-  | 'OFFENSIVE_STRIKE'   // Land on opponent -> Send to yard (+20 bonus stride)
-  | 'SANCTUARY_RETREAT'  // Seek shelter on safe star cell or colored column
-  | 'GOAL_RUSH'          // Advance directly into victory center (+10 bonus stride)
-  | 'FORTIFY_WALL'       // Form impassable 2-token blockade
-  | 'MOBILIZE_RESERVE'   // Roll 5 -> Deploy fresh counter from home base
-  | 'TACTICAL_TEMPO';    // Reposition runner to minimize counterattack exposure
-```
+| Primitive | Return Type | Role in Ludo & Friends Pro |
+|---|---|---|
+| **`Choice<T>`** | `{ selected: T, confidence: number, distribution: Record<T, number> }` | Arbitrates the overarching strategic route from candidate evaluations (`StrategicRoute`). |
+| **`Score`** | `{ level: 1..5, label: string, numericValue: number, explanation: string }` | Measures board tension index, move efficiency, and destination threat risk. |
+| **`Noul`** | `{ condition: string, probability: number, holds: boolean }` | Computes calibrated condition likelihoods (`is_kill_opportunity`, `is_wall_formation`, `is_safe_refuge`). |
 
-#### 2. Score Primitive (Ordered Risk & Tension Gradients)
-Discretizes multidimensional risk and tension into 5 calibrated levels:
-- **Level 1 (NEGLIGIBLE):** Destination is a safe haven (star cell) or unthreatened.
-- **Level 2 (LOW):** Trailing opponents are distant (> 6 cells away).
-- **Level 3 (MODERATE):** Active race; opponent is within potential multi-turn range.
-- **Level 4 (HIGH):** Direct line-of-fire within 1–6 cells of an approaching hunter.
-- **Level 5 (CRITICAL):** Lethal exposure; non-safe tile directly exposed to multiple foes.
+### 3. The 6 Strategic Routes
 
-#### 3. Noul Primitive (Condition Probabilities)
-Returns calibrated $P \in [0.0, 1.0]$:
-- `is_kill_opportunity` ($P \ge 0.95$ when enemy single counter is vulnerable)
-- `is_wall_formation` ($P \ge 0.90$ when partnering with own counter)
-- `is_safe_refuge` ($P \ge 0.95$ on safe cells or home stretch)
-- `requires_moderation` (toxicity & harassment detection for in-game chat)
+1. **`OFFENSIVE_STRIKE` (Priority 1):** Targets an vulnerable opponent token, sending it back to their yard while earning a **+20 cell movement bonus**.
+2. **`FORTIFY_WALL` (Priority 2):** Combines two tokens of the same color on a track cell to create an **Impassable Wall (Blockade)** that no token can leap over.
+3. **`GOAL_RUSH` (Priority 3):** Advances a runner into the home stretch or center goal triangle, triggering a **+10 cell bonus**.
+4. **`SANCTUARY_RETREAT` (Priority 4):** Directs a threatened token to a designated Star Cell (`★`) or home column refuge where it cannot be captured.
+5. **`MOBILIZE_RESERVE` (Priority 5):** On rolling a 5, immediately breaks out a pawn from the home yard onto the track.
+6. **`TACTICAL_TEMPO` (Priority 6):** Advances track runners to maximize board coverage while maintaining safe spacing from pursuers.
 
-### Real-Time Assistant & Developer Inspector
-Players can toggle the **TypeSafe Intelligence Panel** directly from the top navigation to view live probabilities, strategic rationale, and inspected JSON payloads on every roll.
+### 4. Speculative Fan-Out & Social Moderation
+
+In addition to move evaluation, TypeSafe System One runs **In-Game Chat Moderation & Sportsmanship Classification**:
+- Categorizes chat intent (`GOOD_SPORTSMANSHIP`, `TAUNT`, `TACTICAL_ADVICE`, `FRUSTRATION`, `CASUAL`).
+- Analyzes toxicity via `Noul` (`requires_moderation`).
+- Dynamically assigns context-aware Apple reactions (`👏`, `🎯`, `🧠`, `😅`).
 
 ---
 
-## 🕹️ 2008 J2ME Retro Heritage: ANYPLAYS™ Preservation
+## 🍏 Apple Design System & 8K Visual Engine
 
-In 2008, Spanish mobile game studio **Movilenio Servicios Móviles S.L.** under their **ANYPLAYS™** publishing label launched *Ludo & Friends 1.0*. This project honors their original work:
+Every interaction adheres strictly to Apple's Human Interface Guidelines (HIG) and the *Designing Fluid Interfaces* philosophy (WWDC 2018–2026):
 
-### The Original 4 Character Classes
-| Character | Color | Role | Personality & Archetype |
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     8K OPTICAL STACK DIAGRAM                    │
+├─────────────────────────────────────────────────────────────────┤
+│  [Top Glass Sheen]      Radial specular reflection              │
+│  [Enamel Lacquer]       High-index jewel body                   │
+│  [Micro-Beveled Rim]    Sub-pixel precision inner ring          │
+│  [Contact Shadow]       Sharp contact occlusion                 │
+│  [Penumbra Shadow]      Diffused atmospheric scattering (0 24px) │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 1. 8K Photorealistic Materials
+- **Machined Aluminum Bezel Chassis (`apple-chassis-8k`):** A diamond-cut chamfered edge surrounding the board with ambient occlusion and dual inner reflection lines.
+- **Ivory Resin 3D Dice (`dice-ivory-8k`):** Multi-stop radial ivory body with recessed, high-gloss lacquer pips and realistic indentation cavity drop shadows.
+- **Enamel Lacquer Tokens:** Polished optical acrylic pawns featuring key light highlights, micro-beveled inner rings, and precision concentric cores.
+- **Liquid Glass Materials (`apple-glass`):** Double-pass Gaussian backdrop blur (`24px`), color saturation boost (`190%`), and sub-pixel glass edge borders.
+
+### 2. Apple Color System & Surface Alternation
+- **Action Blue (`#0066cc`, hover: `#0071e3`, dark: `#2997ff`):** The singular interactive color. Every button, active state, and navigation focus indicator routes through Action Blue.
+- **Parchment (`#f5f5f7`):** The signature Apple canvas for light surfaces.
+- **Near-Black Ink (`#1d1d1f`):** Provides photographic warmth instead of flat digital black.
+- **Apple Studio Dark (`#19191b` / `#272729`):** Museum gallery dark canvas where the product takes center stage.
+- **Apple HIG Character Tints:**
+  - Red: `#FF3B30` (Paladin)
+  - Blue: `#007AFF` (Knight)
+  - Green: `#34C759` (Wizard)
+  - Amber: `#FF9500` (Orc)
+
+### 3. Fluid Motion Physics (`apple-design-fluid`)
+- **Zero Latency on Pointer-Down:** Buttons and tokens respond instantly on `pointerdown` (`active:scale-95`), eliminating the perceived latency of waiting for touch release.
+- **Critically Damped Springs:** Configured at a damping ratio of `1.0` (response `0.35s`) for seamless UI settling without oscillation.
+- **Realistic Parabolic Hop:** Tokens jump along an authentic physical arc with squash-and-stretch (`scale(0.92, 1.08)` ascent, `scale(1.12, 0.88)` landing impact).
+- **3D Dice Tumble:** Authentic 6-axis tumbling animation (`perspective(600px) rotateX(720deg) rotateY(720deg)`) simulating physical momentum and angular velocity.
+
+---
+
+## 🏛️ 2008 J2ME Retro Heritage: ANYPLAYS™ Preservation
+
+Extracted directly from the original mobile archive (`ludoandfri_3br9fdrn.jar`), this release faithfully preserves the beloved rules and fantasy archetypes of **Ludo & Friends 1.0 (ANYPLAYS™ / Movilenio)**:
+
+| Character | Color | Role & Archetype | Unique Trait |
 |---|---|---|---|
-| 🦁 **Paladin** | Red | Vanguard | Bold offensive breaker; excels at yard breakouts |
-| 🐲 **Knight** | Blue | Defender | Fortified wall master; controls bottleneck safe cells |
-| 🧙 **Wizard** | Green | Strategist | Precision runner; calculates exact home goal approaches |
-| 🦊 **Orc** | Yellow | Conqueror | Ambush hunter; pursues +20 elimination bonuses |
+| **Paladin** | 🔴 Red | Righteous Defender of the Realm | Direct tactical advance, strong defensive spacing |
+| **Knight** | 🔵 Blue | Ironclad Master of the Lance | Aggressive offensive strikes, relentless hunter |
+| **Wizard** | 🟢 Green | Arcane Master of Sanctuary | Precision star hopping, early home column entry |
+| **Orc** | 🟡 Yellow | Unstoppable Warlord | Heavy blockade formations, crushing tempo |
+
+### Authentic 2008 ANYPLAYS Mechanics
+1. **The Roll of 5:** Tokens require a roll of **5** (not 6) to exit the home yard onto the track.
+2. **The Impassable Blockade:** When two tokens of the same color occupy the same cell, they form a **Wall**. No player (including the owner) may pass or land on this cell until the wall is disassembled.
+3. **The +20 Kill Bounty:** Capturing an enemy token awards the player an immediate **+20 cell forward bonus** with any of their tokens.
+4. **The +10 Goal Bounty:** Moving a token into the final center goal awards an immediate **+10 cell forward bonus**.
+5. **The Three-Sixes Penalty:** Rolling three consecutive sixes forfeits the player's turn immediately.
 
 ---
 
-## 📜 Official Game Rules & Mathematical Matrix
+## 🛡️ Multiplayer Resilience & Sandboxed Storage Architecture
+
+To ensure flawless operation across modern web browsers and sandboxed iframes (such as **YouTube Playables**), the multiplayer engine implements a comprehensive defensive architecture:
 
 ```
-                      [ GREEN HOME YARD ]
-                              │
-                    [06] [07] [08] ★ [10] [11]
-                     ▲                      │
-                     │   [ CENTER GOAL ]    ▼
-[ RED HOME YARD ] ──▶│       ★ 🏆 ★        │◀── [ BLUE HOME YARD ]
-                     ▲                      │
-                     │   [50] [51] [00] ★   ▼
-                              │
-                     [ YELLOW HOME YARD ]
+[ Browser / Iframe Environment ]
+               │
+               ▼
+   [ getSafeLocalStorage() ]
+   [ safeStorage() Probe   ]
+               │
+        ┌──────┴──────┐
+        │             │
+   Access OK      SecurityError / Blocked
+        │             │
+        ▼             ▼
+ [sessionStorage] [In-Memory UUID Cache] ──► logHealthWarning(STORAGE_ACCESS_BLOCKED)
+        │             │
+        └──────┬──────┘
+               ▼
+     [ useMultiplayer Hook ]
+               │
+      Online / Connected ?
+        ├── YES ──► Live Supabase Realtime Room
+        └── NO  ──► Render <MultiplayerFallbackScreen />
+                     ├── 1-Click Pass & Play (Local)
+                     ├── 1-Click Solo vs TypeSafe AI
+                     └── Inspect Diagnostics
 ```
 
-1. **Deploying from Home Base:** A roll of **5** is required to bring a counter out of the home yard onto the start position.
-2. **Rolling a 6:** Grants an immediate extra turn.
-3. **Triple 6 Penalty:** Rolling three consecutive sixes penalizes the player by immediately returning their last moved counter back to home base!
-4. **Impassable Walls (Blockades):** When two counters of the same color occupy the same cell, they form an impassable wall. No counter can jump or pass through. If a player rolls a 6 and owns an active wall, the wall must be broken!
-5. **Elimination & +20 Bonus Stride:** Landing on a tile occupied by a single opponent counter captures it, sending it back to their yard, and awards the capturing player an instant **20-cell bonus stride** for any of their other active tokens.
-6. **Safe Cells (★):** Counters resting on safe star cells cannot be eliminated or captured.
-7. **Exact Goal Entry & +10 Bonus:** Entering the center goal cell requires the exact roll number. Successful arrival grants a **10-cell bonus stride** to another counter.
+- **Storage Probing:** Probes `sessionStorage` and `localStorage` inside `try/catch` blocks to prevent unhandled `SecurityError` or `DOMException` crashes.
+- **In-Memory Fallback UUIDs:** When storage is denied, `generatePlayerId` seamlessly switches to a module-scoped memory cache (`memoryPlayerId`), preserving the player's session identity.
+- **Interactive Dev Harness:** Built-in `testGeneratePlayerIdWithNullStorage()` test harness exposed to `window.__testGeneratePlayerId` and accessible directly inside the Apple Debug Panel.
+- **Fail-Safe Fallback Screen:** If the network or backend is unreachable, [`MultiplayerFallbackScreen`](file:///c:/Users/Admin/Downloads/GitHub/Ludo-Board-Game/src/components/MultiplayerFallbackScreen.tsx) renders instantly, allowing users to switch directly to local Pass & Play or TypeSafe AI with zero downtime.
 
 ---
 
-## ⚡ Features & Capabilities
+## 🎲 Official Game Rules & Mathematical Matrix
 
--  **Four Apple Themes:** Apple Studio Dark, Ceramic Light, Pro OLED Void, and Heritage Wood Table.
-- 🎲 **Fluid Spring 3D Dice:** Physics-based tumbling animations with tactile recessed pips.
-- 🏃 **Parabolic Token Hopping:** Smooth frame-by-frame hop animations along the 52-cell track.
-- 🤖 **TypeSafe System One CPU:** Intelligent opponent routing balancing offense, defense, and safety.
-- 👥 **Real-time Multiplayer:** Instant room creation, code-based invites, and synchronized turns powered by Supabase.
-- 💬 **In-Game Chat & Sentiment:** Instant messaging with TypeSafe AI sentiment classification and quick reactions.
-- 🔊 **Zero-Dependency Web Audio:** Procedural synthesis of dice rumbles, token steps, fanfare, and retro pings.
-- ↩️ **Full Undo & Redo History:** Snapshot-based local state rollback for human practice turns.
-- 📱 **Fully Responsive Layout:** Optimized from iPhone compact touch targets (44px) up to ultra-wide desktop displays (1440px).
+```
+       [RED BASE]              [BLUE TRACK]             [BLUE BASE]
+      (Paladin 🔴)            Cells 13 - 25             (Knight 🔵)
+      ┌──────────┐        ┌────┬────┬────┬────┐        ┌──────────┐
+      │  🦁  🦁  │        │ 11 │ 12 │ 13*│ 14 │        │  🐲  🐲  │
+      │  🦁  🦁  │        ├────┼────┼────┼────┤        │  🐲  🐲  │
+      └──────────┘        │ 10 │ H1 │ H2 │ 15 │        └──────────┘
+                          ├────┼────┼────┼────┤
+    Cells 0 - 12          │ 09 │ H2 │ H3 │ 16 │        Cells 26 - 38
+    [RED TRACK]           ├────┼────┼────┼────┤        [YELLOW TRACK]
+    Start: 0 (Cell 1)     │ 08 │ H3 │ 🏆 │ 17 │        Start: 26 (Cell 27)
+                          ├────┼────┼────┼────┤
+      ┌──────────┐        │ 07 │ H4 │ H5 │ 18 │        ┌──────────┐
+      │  🧙  🧙  │        ├────┼────┼────┼────┤        │  🦊  🦊  │
+      │  🧙  🧙  │        │ 06 │ 05 │ 04 │ 19 │        │  🦊  🦊  │
+      └──────────┘        └────┴────┴────┴────┘        └──────────┘
+      [GREEN BASE]            [GREEN TRACK]           [YELLOW BASE]
+      (Wizard 🟢)             Cells 39 - 51             (Orc 🟡)
+```
+
+- **Outer Circuit Track:** Exactly 52 global track positions (`0` to `51`).
+- **Safe Star Sanctuaries (`★`):** Track indices `0`, `8`, `13`, `21`, `26`, `34`, `39`, `47`.
+- **Home Final Stretch:** 5 private home cells (`52` to `56`) per player.
+- **Center Goal:** Cell index `57` (exact roll required).
 
 ---
 
@@ -224,71 +270,74 @@ In 2008, Spanish mobile game studio **Movilenio Servicios Móviles S.L.** under 
 Ludo-Board-Game/
 ├── src/
 │   ├── components/
-│   │   ├── AppleGlobalNav.tsx          #  44px pure black top navigation bar
-│   │   ├── AppleSubNav.tsx             #  52px frosted glass sub-nav with action pill
-│   │   ├── TypeSafeAssistantPanel.tsx  # Live System One Jev telemetry overlay
-│   │   ├── TypeSafeStudioView.tsx      # Interactive System One pipeline simulator
-│   │   ├── RetroHeritageModal.tsx      # 2008 J2ME historical gallery & credits
-│   │   ├── HeritageArchiveView.tsx     # Full page evolution of ANYPLAYS 2008 -> 2026
-│   │   ├── LudoBoard.tsx               # Apple squircle board with single drop-shadow
-│   │   ├── TokenPiece.tsx              # Fluid specular glass tokens with spring hop
-│   │   ├── Dice.tsx                    # Chamfered squircle die with tumble physics
-│   │   ├── PlayerPanel.tsx             # Frosted pill player capsules with turn glow
-│   │   ├── RulesModal.tsx              # Clean Apple typography rulebook dialog
-│   │   ├── GameSetup.tsx               # Pre-match roster & avatar configurator
-│   │   ├── MultiplayerLobby.tsx        # Real-time room matchmaking
-│   │   ├── GameChat.tsx                # Social chat with emoji reaction tray
-│   │   └── VictoryScreen.tsx           # Confetti fanfare & match statistics
+│   │   ├── AppleGlobalNav.tsx             # 44px museum-grade Apple navigation bar
+│   │   ├── AppleSubNav.tsx                # Fluid capsule sub-navigation (Game/AI/Heritage)
+│   │   ├── LudoBoard.tsx                  # 8K Apple squircle board with aluminum chassis
+│   │   ├── TokenPiece.tsx                 # 8K enamel lacquer pawn with specular sheen & core jewel
+│   │   ├── Dice.tsx                       # 8K ivory resin 3D tumbling dice
+│   │   ├── TypeSafeAssistantPanel.tsx     # Real-time TypeSafe System One live telemetry
+│   │   ├── TypeSafeStudioView.tsx         # Interactive System One sandbox & scenario simulator
+│   │   ├── HeritageArchiveView.tsx        # 2008 J2ME ANYPLAYS archive explorer & lore
+│   │   ├── MultiplayerLobby.tsx           # Apple-styled multiplayer room coordinator
+│   │   ├── MultiplayerFallbackScreen.tsx  # Resilient zero-downtime offline fallback view
+│   │   ├── MultiplayerErrorBoundary.tsx   # React Error Boundary for multiplayer subsystems
+│   │   ├── DebugPanel.tsx                 # Real-time diagnostics & null-storage dev harness
+│   │   └── VictoryScreen.tsx              # Golden celebratory victory presentation
+│   ├── hooks/
+│   │   ├── useMultiplayer.ts              # Resilient multiplayer hook with defensive storage
+│   │   └── useGameChat.ts                 # Realtime game chat & TypeSafe moderation
 │   ├── lib/
-│   │   ├── typeSafeAI.ts               # TypeSafe System One Jev Engine & Primitives
-│   │   ├── ludoGame.ts                 # Core board game rules & deterministic engine
-│   │   ├── soundManager.ts             # Web Audio API procedural sound synthesizer
-│   │   └── ytPlayables.ts              # YouTube Playables certified SDK bridge
-│   ├── test/
-│   │   ├── typeSafeAI.test.ts          # Unit tests for System One primitives
-│   │   └── example.test.ts             # General test suite
-│   ├── index.css                       # Apple Design tokens, typography & materials
-│   └── main.tsx                        # React application root
-├── tailwind.config.ts                  # Apple colors, typography & spring keyframes
-├── package.json                        # Dependencies & scripts
-└── README.md                           # Documentation
+│   │   ├── ludoGame.ts                    # Core mathematical Ludo engine & movement rules
+│   │   ├── typeSafeAI.ts                  # TypeSafe System One (Jev) evaluation & routing pattern
+│   │   ├── ytPlayables.ts                 # YouTube Playables SDK wrapper & health logger
+│   │   └── soundManager.ts                # Spatial Web Audio sound effects engine
+│   └── test/
+│       ├── example.test.ts                # Baseline sanity suite
+│       ├── typeSafeAI.test.ts             # TypeSafe System One judgments & routing tests
+│       └── generatePlayerId.test.ts       # Defensive storage & null-storage harness tests
+├── tailwind.config.ts                     # Apple Design System tokens & keyframe animations
+└── README.md                              # Comprehensive project documentation
 ```
 
 ---
 
 ## 🚀 Getting Started & Local Development
 
-### Prerequisites
-- **Node.js:** v18.0.0 or higher (v26.x recommended)
-- **npm:** v9.0.0 or higher
+### 1. Prerequisites
+- **Node.js:** v18.0.0 or later (v20+ recommended)
+- **Package Manager:** `npm` (v9+) or `pnpm`
 
-### Installation
+### 2. Clone & Install
 
 ```bash
 # Clone the repository
 git clone https://github.com/Rahul08319/Ludo-Board-Game.git
+
+# Navigate to workspace
 cd Ludo-Board-Game
 
 # Install dependencies
 npm install
-
-# Start local development server
-npm run dev
 ```
 
-Visit `http://localhost:5173` in your browser.
-
-### Running Unit Tests
+### 3. Run Development Server
 
 ```bash
-# Run Vitest test suite
+npm run dev
+```
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+### 4. Run Automated Test Suites
+
+```bash
+# Execute Vitest test suites (All 9 tests across 3 files)
 npm test
 ```
 
-### Production Build
+### 5. Production Build & Preview
 
 ```bash
-# Build optimized production bundle
+# Build optimized 8K production bundle
 npm run build
 
 # Preview production build locally
@@ -299,33 +348,24 @@ npm run preview
 
 ## 📺 YouTube Playables Certified Lifecycle
 
-The game includes full native hooks for the **YouTube Playables SDK**:
-- `yt.firstFrameReady()` fired on initial component mount.
-- `yt.gameReady()` triggered as soon as the board stage is interactable.
-- `yt.onAudioEnabledChange()` synchronized directly with the Web Audio manager.
-- `yt.onPause()` & `yt.onResume()` state serialization via `yt.saveData()` and `yt.loadData()`.
-- Rewarded Ads integration with `yt.requestRewardedAd()` for guaranteed rolls.
+The application complies with the YouTube Playables Certification checklist:
+- **Immediate Pause / Resume:** Automatically listens to `ytgame.game.onPause` and `onResume` to mute sound and pause animations.
+- **Audio Routing:** Syncs audio muting with `ytgame.system.isAudioEnabled()`.
+- **Health Telemetry:** Uses `logHealthWarning` and `logHealthError` to dispatch structured event packets without unhandled exceptions.
+- **Zero-Storage Crash Resilience:** Never crashes in third-party sandboxed iframes where `window.localStorage` or `sessionStorage` throw `SecurityError`.
 
 ---
 
-## 🏆 Credits & Historical Acknowledgments
+## 📜 Historical Credits & License
 
-### Original 2008 J2ME Creation
-- **Original Title:** *Ludo & Friends 1.0* (Java ME)
-- **Publisher:** ANYPLAYS™ / Movilenio Servicios Móviles S.L. (2008)
-- **Software Engineering:** Iñaki Segrelles
-- **Art & Sprites:** Pablo Sánchez
-- **Music & MIDI Score:** José Vázquez
-- **Quality Assurance:** José Jimeno
-
-### Modern Apple & TypeSafe Edition (2026)
-- **Design & Architecture:** Built with the **Apple Design System** & **Apple Fluid Interfaces**.
-- **Artificial Intelligence:** Integrated with **TypeSafe System One Models (Jev)**.
-- **Repository Maintainer:** [Rahul08319](https://github.com/Rahul08319)
-
----
+- **Original 2008 J2ME Game:** *Ludo & Friends 1.0* by **ANYPLAYS™** (Movilenio Servicios Móviles S.L.), Madrid, Spain.
+- **Design Language:** Inspired by Apple Inc.’s Human Interface Guidelines and WWDC Fluid Interfaces.
+- **AI Engine:** TypeSafe System One (Jev) Architecture.
+- **License:** Released under the permissive [MIT License](LICENSE).
 
 <div align="center">
-  <p>Crafted with uncompromising attention to detail, reverence for retro gaming history, and cutting-edge agentic design.</p>
-  <p> Designed in California & Bangalore • Licensed under the MIT License</p>
+<br/>
+Crafted with precision, mathematical rigor, and passion for timeless play.
+<br/>
+<b> Ludo & Friends Pro • 2026</b>
 </div>

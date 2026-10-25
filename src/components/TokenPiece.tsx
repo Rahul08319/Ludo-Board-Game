@@ -1,5 +1,6 @@
 import React from 'react';
 import type { PlayerColor } from '@/lib/ludoGame';
+import { Shield } from 'lucide-react';
 
 interface TokenPieceProps {
   color: PlayerColor;
@@ -7,33 +8,40 @@ interface TokenPieceProps {
   isSelected: boolean;
   onClick: () => void;
   small?: boolean;
+  isBlockade?: boolean;
+  count?: number;
 }
 
-// Apple Human Interface System Tints
+// Apple Human Interface System Tints with 8K Optical Material Profiles
 const appleColors: Record<PlayerColor, {
-  gradient: string;
+  radial: string;
   glow: string;
-  border: string;
+  accent: string;
+  crest: string;
 }> = {
   red: {
-    gradient: 'from-[#FF6961] via-[#FF3B30] to-[#D70015]',
-    glow: '0 0 14px rgba(255, 59, 48, 0.65)',
-    border: 'border-white/40',
+    radial: 'radial-gradient(circle at 35% 25%, #FF7B72 0%, #FF3B30 45%, #C91D12 85%, #8B0000 100%)',
+    glow: '0 0 20px rgba(255, 59, 48, 0.75)',
+    accent: '#FF3B30',
+    crest: '🦁',
   },
   blue: {
-    gradient: 'from-[#64D2FF] via-[#007AFF] to-[#0040DD]',
-    glow: '0 0 14px rgba(0, 122, 255, 0.65)',
-    border: 'border-white/40',
+    radial: 'radial-gradient(circle at 35% 25%, #70D7FF 0%, #007AFF 45%, #0051C7 85%, #002D80 100%)',
+    glow: '0 0 20px rgba(0, 122, 255, 0.75)',
+    accent: '#007AFF',
+    crest: '🐲',
   },
   green: {
-    gradient: 'from-[#63E6E2] via-[#34C759] to-[#248A3D]',
-    glow: '0 0 14px rgba(52, 199, 89, 0.65)',
-    border: 'border-white/40',
+    radial: 'radial-gradient(circle at 35% 25%, #72F0B0 0%, #34C759 45%, #228B3B 85%, #0E5220 100%)',
+    glow: '0 0 20px rgba(52, 199, 89, 0.75)',
+    accent: '#34C759',
+    crest: '🧙',
   },
   yellow: {
-    gradient: 'from-[#FFD60A] via-[#FF9500] to-[#C93400]',
-    glow: '0 0 14px rgba(255, 149, 0, 0.65)',
-    border: 'border-white/40',
+    radial: 'radial-gradient(circle at 35% 25%, #FFE066 0%, #FF9500 45%, #D46B00 85%, #8A3B00 100%)',
+    glow: '0 0 20px rgba(255, 149, 0, 0.75)',
+    accent: '#FF9500',
+    crest: '🦊',
   },
 };
 
@@ -43,8 +51,10 @@ export const TokenPiece: React.FC<TokenPieceProps> = ({
   isSelected,
   onClick,
   small = false,
+  isBlockade = false,
+  count = 1,
 }) => {
-  const size = small ? 'w-6 h-6' : 'w-8 h-8 sm:w-9 sm:h-9';
+  const size = small ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-8 h-8 sm:w-10 sm:h-10';
   const c = appleColors[color];
 
   return (
@@ -52,29 +62,54 @@ export const TokenPiece: React.FC<TokenPieceProps> = ({
       onClick={onClick}
       disabled={!isSelectable}
       className={`
-        ${size} rounded-full bg-gradient-to-b ${c.gradient}
-        border transition-all duration-200 relative select-none
-        apple-press
+        ${size} rounded-full transition-all duration-200 relative select-none
+        apple-press flex items-center justify-center
         ${isSelectable ? 'cursor-pointer animate-apple-hop' : 'cursor-default'}
-        ${isSelected ? 'ring-3 ring-[#0071e3] scale-110 shadow-lg' : ''}
-        ${isSelectable ? 'border-white/80' : 'border-black/20 dark:border-white/20'}
+        ${isSelected ? 'ring-4 ring-[#0071e3] scale-110 shadow-2xl' : ''}
       `}
       style={{
-        zIndex: isSelectable ? 25 : 10,
+        background: c.radial,
+        zIndex: isSelectable ? 30 : 10,
         boxShadow: isSelectable
-          ? `0 6px 16px rgba(0, 0, 0, 0.3), inset 0 1.5px 2px rgba(255, 255, 255, 0.8), ${c.glow}`
-          : '0 3px 8px rgba(0, 0, 0, 0.25), inset 0 1px 1.5px rgba(255, 255, 255, 0.5)',
+          ? `0 12px 24px -4px rgba(0, 0, 0, 0.4), 0 4px 8px rgba(0, 0, 0, 0.25), inset 0 2px 2px rgba(255, 255, 255, 0.95), ${c.glow}`
+          : '0 4px 10px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 1.5px 1.5px rgba(255, 255, 255, 0.7)',
+        border: isSelectable ? '1.5px solid rgba(255, 255, 255, 0.95)' : '1px solid rgba(255, 255, 255, 0.35)',
       }}
-      title={`Token (${color}) ${isSelectable ? '- Click to Move' : ''}`}
+      title={`Token (${color}) ${isSelectable ? '- Click to Advance' : ''} ${isBlockade ? '(Impassable Blockade)' : ''}`}
     >
-      {/* Upper Specular Glass Sheen */}
-      <div className="absolute inset-x-[3px] top-[2px] h-[40%] rounded-full bg-gradient-to-b from-white/70 to-transparent pointer-events-none" />
+      {/* 8K High-Gloss Specular Lens Reflection */}
+      <div
+        className="absolute inset-x-[3px] top-[2px] h-[45%] rounded-full pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.2) 70%, transparent 100%)',
+          clipPath: 'ellipse(85% 65% at 50% 35%)',
+        }}
+      />
 
-      {/* Subtle Inner Ring */}
-      <div className="absolute inset-[3px] rounded-full border border-white/25 pointer-events-none" />
+      {/* Micro-Beveled Inner Ring */}
+      <div className="absolute inset-[3px] rounded-full border border-white/30 pointer-events-none" />
 
-      {/* Concentric Precision Core */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/50 shadow-inner" />
+      {/* Optical Precision Core Jewel */}
+      <div className="relative z-10 flex items-center justify-center">
+        {isBlockade ? (
+          <div className="flex items-center justify-center w-3.5 h-3.5 rounded-full bg-black/60 text-white shadow-sm border border-white/60">
+            <Shield className="w-2.5 h-2.5 text-amber-300" />
+          </div>
+        ) : count > 1 ? (
+          <span className="text-[10px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+            {count}
+          </span>
+        ) : (
+          <div className="w-2 h-2 rounded-full bg-white/75 shadow-[inset_0_1px_1px_rgba(0,0,0,0.4)] border border-white/50" />
+        )}
+      </div>
+
+      {/* Blockade Fortification Ribbon */}
+      {isBlockade && (
+        <span className="absolute -top-1 -right-1 px-1 py-0.2 rounded-full bg-amber-500 text-[8px] font-bold text-white shadow-md border border-white/70 leading-tight">
+          WALL
+        </span>
+      )}
     </button>
   );
 };

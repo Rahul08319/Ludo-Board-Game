@@ -43,26 +43,26 @@ const HOME_BASES: Record<PlayerColor, [number, number][]> = {
   yellow: [[10, 10], [10, 12], [12, 10], [12, 12]],
 };
 
-// Apple-refined quadrant palettes
+// Apple-refined quadrant palettes with subtle glass gradient
 const QUADRANT_STYLES: Record<PlayerColor, React.CSSProperties> = {
-  red: { background: 'linear-gradient(135deg, rgba(255, 59, 48, 0.18), rgba(255, 59, 48, 0.08))' },
-  blue: { background: 'linear-gradient(135deg, rgba(0, 122, 255, 0.18), rgba(0, 122, 255, 0.08))' },
-  green: { background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.18), rgba(52, 199, 89, 0.08))' },
-  yellow: { background: 'linear-gradient(135deg, rgba(255, 149, 0, 0.18), rgba(255, 149, 0, 0.08))' },
+  red: { background: 'linear-gradient(135deg, rgba(255, 59, 48, 0.22), rgba(255, 59, 48, 0.06))' },
+  blue: { background: 'linear-gradient(135deg, rgba(0, 122, 255, 0.22), rgba(0, 122, 255, 0.06))' },
+  green: { background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.22), rgba(52, 199, 89, 0.06))' },
+  yellow: { background: 'linear-gradient(135deg, rgba(255, 149, 0, 0.22), rgba(255, 149, 0, 0.06))' },
 };
 
 const HOME_COL_STYLES: Record<PlayerColor, React.CSSProperties> = {
-  red: { background: 'linear-gradient(90deg, rgba(255, 59, 48, 0.35), rgba(255, 59, 48, 0.18))' },
-  blue: { background: 'linear-gradient(180deg, rgba(0, 122, 255, 0.35), rgba(0, 122, 255, 0.18))' },
-  green: { background: 'linear-gradient(0deg, rgba(52, 199, 89, 0.35), rgba(52, 199, 89, 0.18))' },
-  yellow: { background: 'linear-gradient(270deg, rgba(255, 149, 0, 0.35), rgba(255, 149, 0, 0.18))' },
+  red: { background: 'linear-gradient(90deg, rgba(255, 59, 48, 0.45), rgba(255, 59, 48, 0.18))' },
+  blue: { background: 'linear-gradient(180deg, rgba(0, 122, 255, 0.45), rgba(0, 122, 255, 0.18))' },
+  green: { background: 'linear-gradient(0deg, rgba(52, 199, 89, 0.45), rgba(52, 199, 89, 0.18))' },
+  yellow: { background: 'linear-gradient(270deg, rgba(255, 149, 0, 0.45), rgba(255, 149, 0, 0.18))' },
 };
 
 const START_STYLES: Record<PlayerColor, React.CSSProperties> = {
-  red: { background: 'rgba(255, 59, 48, 0.35)' },
-  blue: { background: 'rgba(0, 122, 255, 0.35)' },
-  green: { background: 'rgba(52, 199, 89, 0.35)' },
-  yellow: { background: 'rgba(255, 149, 0, 0.35)' },
+  red: { background: 'rgba(255, 59, 48, 0.4)' },
+  blue: { background: 'rgba(0, 122, 255, 0.4)' },
+  green: { background: 'rgba(52, 199, 89, 0.4)' },
+  yellow: { background: 'rgba(255, 149, 0, 0.4)' },
 };
 
 function getTokensAtPosition(state: GameState, globalPos: number): { token: Token; color: PlayerColor }[] {
@@ -164,6 +164,9 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
       }
     }
 
+    // Check for Impassable Wall (Blockade from 2008 J2ME ANYPLAYS rules)
+    const isBlockade = trackIdx >= 0 && cellTokens.length >= 2 && cellTokens.every(ct => ct.color === cellTokens[0].color);
+
     // Style determination
     let cellStyle: React.CSSProperties = {};
     let extraClasses = '';
@@ -173,11 +176,11 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
         background: `
           conic-gradient(
             from 45deg,
-            rgba(255, 59, 48, 0.85),
-            rgba(0, 122, 255, 0.85),
-            rgba(255, 149, 0, 0.85),
-            rgba(52, 199, 89, 0.85),
-            rgba(255, 59, 48, 0.85)
+            rgba(255, 59, 48, 0.95),
+            rgba(0, 122, 255, 0.95),
+            rgba(255, 149, 0, 0.95),
+            rgba(52, 199, 89, 0.95),
+            rgba(255, 59, 48, 0.95)
           )
         `,
       };
@@ -190,15 +193,22 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
       cellStyle = { background: 'hsl(var(--board-cell))' };
     } else if (quadrant && !Object.values(HOME_BASES).flat().some(([r, c]) => r === row && c === col)) {
       cellStyle = QUADRANT_STYLES[quadrant];
+      const isCurrentPlayerQuad = currentPlayer?.color === quadrant;
       return (
-        <div key={`${row}-${col}`} className="border border-black/5 dark:border-white/5" style={cellStyle} />
+        <div
+          key={`${row}-${col}`}
+          className={`border border-black/5 dark:border-white/5 transition-all duration-300 ${
+            isCurrentPlayerQuad ? 'bg-black/5 dark:bg-white/5' : ''
+          }`}
+          style={cellStyle}
+        />
       );
     } else {
       cellStyle = { background: 'hsl(var(--board-cell))' };
     }
 
     if (trackIdx >= 0 && isSafeCell(trackIdx)) {
-      extraClasses = 'ring-1 ring-inset ring-amber-500/40 bg-amber-500/5';
+      extraClasses = 'ring-1 ring-inset ring-amber-500/50 bg-amber-500/10 shadow-[inset_0_0_8px_rgba(251,191,36,0.15)]';
     }
 
     return (
@@ -231,31 +241,38 @@ export const LudoBoard: React.FC<LudoBoardProps> = ({
               isSelected={false}
               onClick={() => onTokenClick(color, token.id)}
               small
+              isBlockade={isBlockade}
+              count={cellTokens.length}
             />
           </div>
         ))}
 
         {center && (
           <div
-            className="w-6 h-6 rounded-full border-2 border-white/60 shadow-md flex items-center justify-center"
-            style={{ background: 'radial-gradient(circle, #ffffff 20%, rgba(255,255,255,0.2) 90%)' }}
+            className="w-7 h-7 rounded-full border-2 border-white/80 shadow-lg flex items-center justify-center"
+            style={{
+              background: 'radial-gradient(circle at 35% 30%, #ffffff 10%, #ffd700 70%, #d4af37 100%)',
+              boxShadow: '0 0 16px rgba(255, 215, 0, 0.75)',
+            }}
           >
-            <span className="text-[10px] leading-none">🏆</span>
+            <span className="text-[12px] leading-none drop-shadow-sm">🏆</span>
           </div>
         )}
 
         {trackIdx >= 0 && isSafeCell(trackIdx) && cellTokens.length === 0 && !homeBaseToken && (
-          <span className="text-[10px] text-amber-500 font-bold opacity-75">★</span>
+          <span className="text-[11px] text-amber-500 font-bold opacity-90 drop-shadow-[0_0_4px_rgba(245,158,11,0.5)]">
+            ★
+          </span>
         )}
       </div>
     );
   };
 
   return (
-    <div className="relative w-full max-w-[min(72vh,500px)] aspect-square mx-auto">
-      {/* Museum-Grade Apple Squircle Chassis with Single Signature Drop Shadow */}
+    <div className="relative w-full max-w-[min(72vh,520px)] aspect-square mx-auto p-2 sm:p-3 apple-chassis-8k rounded-[34px]">
+      {/* Museum-Grade Apple Squircle Chassis with Precision Machined Bevel */}
       <div
-        className="w-full h-full rounded-[28px] overflow-hidden border border-black/10 dark:border-white/15 apple-elevation transition-all duration-300"
+        className="w-full h-full rounded-[26px] overflow-hidden border border-black/10 dark:border-white/15 apple-elevation transition-all duration-300"
         style={{
           background: 'hsl(var(--board-bg))',
         }}
