@@ -1,11 +1,11 @@
 import React from 'react';
-import { Play, Sparkles, BookOpen, Clock, RotateCcw } from 'lucide-react';
+import { BookOpen, Clock, RotateCcw } from 'lucide-react';
 
 export type SubNavTab = 'game' | 'heritage' | 'typesafe';
 
 interface AppleSubNavProps {
-  activeTab: SubNavTab;
-  onSelectTab: (tab: SubNavTab) => void;
+  activeTab?: SubNavTab;
+  onSelectTab?: (tab: SubNavTab) => void;
   onNewGame: () => void;
   isPlaying: boolean;
   onOpenRules: () => void;
@@ -13,8 +13,6 @@ interface AppleSubNavProps {
 }
 
 export const AppleSubNav: React.FC<AppleSubNavProps> = ({
-  activeTab,
-  onSelectTab,
   onNewGame,
   isPlaying,
   onOpenRules,
@@ -29,63 +27,28 @@ export const AppleSubNav: React.FC<AppleSubNavProps> = ({
             Ludo & Friends
           </span>
           <span className="hidden sm:inline-block text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-muted-foreground">
-            Apple Edition
+            Pro Edition
           </span>
         </div>
 
-        {/* Center: Segmented Navigation Pills */}
-        <div className="flex items-center bg-black/5 dark:bg-white/10 p-1 rounded-full text-[13px] font-medium">
-          <button
-            onClick={() => onSelectTab('game')}
-            className={`px-3 py-1 rounded-full transition-all apple-press ${
-              activeTab === 'game'
-                ? 'bg-white dark:bg-[#272729] text-foreground shadow-sm font-semibold'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            Board Game
-          </button>
-          <button
-            onClick={() => onSelectTab('typesafe')}
-            className={`px-3 py-1 rounded-full transition-all apple-press flex items-center gap-1 ${
-              activeTab === 'typesafe'
-                ? 'bg-white dark:bg-[#272729] text-[#0066cc] dark:text-[#2997ff] shadow-sm font-semibold'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#0066cc] dark:text-[#2997ff]" />
-            <span>TypeSafe AI</span>
-          </button>
-          <button
-            onClick={() => onSelectTab('heritage')}
-            className={`px-3 py-1 rounded-full transition-all apple-press hidden xs:flex items-center gap-1 ${
-              activeTab === 'heritage'
-                ? 'bg-white dark:bg-[#272729] text-foreground shadow-sm font-semibold'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            <span>J2ME Heritage</span>
-          </button>
-        </div>
-
         {/* Right: Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={onOpenRules}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
             title="Read Game Rules"
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>Rules</span>
+            <span className="hidden sm:inline">Rules</span>
           </button>
 
           <button
             onClick={onToggleHistory}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[13px] font-medium text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
             title="Toggle Turn History"
           >
             <Clock className="w-3.5 h-3.5" />
-            <span>Log</span>
+            <span className="hidden sm:inline">Log</span>
           </button>
 
           {/* Primary Action Blue Pill CTA */}
@@ -100,10 +63,7 @@ export const AppleSubNav: React.FC<AppleSubNavProps> = ({
                 <span>New Match</span>
               </>
             ) : (
-              <>
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Play Match</span>
-              </>
+              <span>New Game</span>
             )}
           </button>
         </div>

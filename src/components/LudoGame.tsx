@@ -29,15 +29,11 @@ import DebugPanel from '@/components/DebugPanel';
 import { createGrant, applyGrantOnce, pendingGrants } from '@/lib/rewardGrants';
 import woodTable from '@/assets/wood-table.jpg';
 
-// Apple Design & TypeSafe AI components
+// Apple Design components
 import AppleGlobalNav, { type AppTheme } from '@/components/AppleGlobalNav';
-import AppleSubNav, { type SubNavTab } from '@/components/AppleSubNav';
-import TypeSafeAssistantPanel from '@/components/TypeSafeAssistantPanel';
-import RetroHeritageModal from '@/components/RetroHeritageModal';
-import TypeSafeStudioView from '@/components/TypeSafeStudioView';
-import HeritageArchiveView from '@/components/HeritageArchiveView';
+import AppleSubNav from '@/components/AppleSubNav';
 import { evaluateLudoMoveSystemOne } from '@/lib/typeSafeAI';
-import { Sparkles, RotateCcw, Volume2, VolumeX, BookOpen, Bug, ShieldAlert, Award } from 'lucide-react';
+import { RotateCcw, Volume2, VolumeX, BookOpen, Bug, ShieldAlert, Award } from 'lucide-react';
 
 let logIdCounter = 0;
 
@@ -62,11 +58,8 @@ const LudoGame: React.FC = () => {
   const [mentionedColors, setMentionedColors] = useState<PlayerColor[]>([]);
   const mentionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Apple Design & TypeSafe AI state
+  // Apple Design theme state
   const [currentTheme, setCurrentTheme] = useState<AppTheme>('studio');
-  const [activeTab, setActiveTab] = useState<SubNavTab>('game');
-  const [showAiAssistant, setShowAiAssistant] = useState(true);
-  const [showHeritageModal, setShowHeritageModal] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
 
   const multiplayer = useMultiplayer();
@@ -255,16 +248,6 @@ const LudoGame: React.FC = () => {
     setUndoStack([]);
     setRedoStack([]);
     setGameState(createInitialState(configs));
-    setActiveTab('game');
-  };
-
-  const handleStartClassicHeritage = () => {
-    handleStart([
-      { color: 'red', type: 'human', name: 'Paladin', avatar: '🦁', difficulty: 'hard' },
-      { color: 'blue', type: 'cpu', name: 'Knight', avatar: '🐲', difficulty: 'hard' },
-      { color: 'green', type: 'cpu', name: 'Wizard', avatar: '🧙', difficulty: 'hard' },
-      { color: 'yellow', type: 'cpu', name: 'Orc', avatar: '🦊', difficulty: 'hard' },
-    ]);
   };
 
   const handleStartPassAndPlay = useCallback(() => {
@@ -281,9 +264,9 @@ const LudoGame: React.FC = () => {
     setShowMultiplayer(false);
     handleStart([
       { color: 'red', type: 'human', name: 'You (Champion)', avatar: '👑' },
-      { color: 'blue', type: 'cpu', name: 'TypeSafe AI 1', avatar: '🤖', difficulty: 'hard' },
-      { color: 'green', type: 'cpu', name: 'TypeSafe AI 2', avatar: '🧠', difficulty: 'hard' },
-      { color: 'yellow', type: 'cpu', name: 'TypeSafe AI 3', avatar: '⚡', difficulty: 'hard' },
+      { color: 'blue', type: 'cpu', name: 'Computer 1', avatar: '🤖', difficulty: 'hard' },
+      { color: 'green', type: 'cpu', name: 'Computer 2', avatar: '🧠', difficulty: 'hard' },
+      { color: 'yellow', type: 'cpu', name: 'Computer 3', avatar: '⚡', difficulty: 'hard' },
     ]);
   }, []);
 
@@ -592,11 +575,6 @@ const LudoGame: React.FC = () => {
     setGameStats(initStats(configs));
   }, [multiplayer]);
 
-  // Live TypeSafe System One Evaluation for current game state
-  const typeSafeEvaluation = (gameState && movableTokens.length > 0)
-    ? evaluateLudoMoveSystemOne(gameState, movableTokens)
-    : null;
-
   // Background styling based on active theme
   const getBackgroundStyle = () => {
     if (currentTheme === 'wood') {
@@ -613,196 +591,162 @@ const LudoGame: React.FC = () => {
         onThemeChange={setCurrentTheme}
         soundEnabled={soundOn}
         onToggleSound={toggleSound}
-        showAiAssistant={showAiAssistant}
-        onToggleAiAssistant={() => setShowAiAssistant(!showAiAssistant)}
-        onOpenHeritage={() => setShowHeritageModal(true)}
         onOpenRules={() => setShowRulesModal(true)}
       />
 
       {/*  Apple Sub-Navigation */}
       <AppleSubNav
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
         onNewGame={() => setGameState(null)}
         isPlaying={!!gameState}
         onOpenRules={() => setShowRulesModal(true)}
         onToggleHistory={() => setShowHistory(h => !h)}
       />
 
-      {/* Main Surface Routing */}
+      {/* Main Surface */}
       <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 w-full max-w-[1440px] mx-auto">
-        {/* TAB 1: TYPE SAFE AI STUDIO */}
-        {activeTab === 'typesafe' && (
-          <TypeSafeStudioView />
-        )}
+        {showMultiplayer && !gameState ? (
+          <MultiplayerErrorBoundary
+            onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
+            onStartPassAndPlay={handleStartPassAndPlay}
+            onStartSoloAI={handleStartSoloAI}
+            onOpenDebug={() => setShowDebug(true)}
+          >
+            <MultiplayerLobby
+              onCreateRoom={multiplayer.createRoom}
+              onJoinRoom={multiplayer.joinRoom}
+              onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
+              loading={multiplayer.loading}
+              error={multiplayer.error}
+              room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
+              lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
+              isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
+              onStartGame={handleStartMultiplayerGame}
+              onStartPassAndPlay={handleStartPassAndPlay}
+              onStartSoloAI={handleStartSoloAI}
+              onOpenDebug={() => setShowDebug(true)}
+            />
+          </MultiplayerErrorBoundary>
+        ) : !gameState ? (
+          <GameSetup
+            onStart={handleStart}
+            onOnlineClick={() => setShowMultiplayer(true)}
+          />
+        ) : (
+          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:items-start py-2">
+            {/* Board Stage */}
+            <div className="flex flex-col items-center gap-4 flex-shrink-0">
+              {/* Top Control Cluster */}
+              <div className="flex items-center gap-3 w-full max-w-[500px] justify-between">
+                <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
+                <GameTimer currentPlayerColor={gameState.players[gameState.currentPlayerIndex].color} isFinished={gameState.phase === 'finished'} />
+                <div className="flex gap-1">
+                  <button
+                    onClick={handleUndo}
+                    disabled={undoStack.length === 0 || animatingRef.current}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
+                    title="Undo"
+                  >
+                    ↩️
+                  </button>
+                  <button
+                    onClick={handleRedo}
+                    disabled={redoStack.length === 0 || animatingRef.current}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
+                    title="Redo"
+                  >
+                    ↪️
+                  </button>
+                  <button
+                    onClick={() => setShowHistory(h => !h)}
+                    className={`p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press ${showHistory ? 'bg-[#0066cc]/20' : ''}`}
+                    title="Turn History"
+                  >
+                    📋
+                  </button>
+                  <button
+                    onClick={() => setShowDebug(d => !d)}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                    title="Debug Panel"
+                  >
+                    🐞
+                  </button>
+                </div>
+              </div>
 
-        {/* TAB 2: J2ME HERITAGE ARCHIVE */}
-        {activeTab === 'heritage' && (
-          <HeritageArchiveView onStartClassicMatch={handleStartClassicHeritage} />
-        )}
-
-        {/* TAB 3: BOARD GAME PLAY */}
-        {activeTab === 'game' && (
-          <>
-            {showMultiplayer && !gameState ? (
-              <MultiplayerErrorBoundary
-                onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
-                onStartPassAndPlay={handleStartPassAndPlay}
-                onStartSoloAI={handleStartSoloAI}
-                onOpenDebug={() => setShowDebug(true)}
-              >
-                <MultiplayerLobby
-                  onCreateRoom={multiplayer.createRoom}
-                  onJoinRoom={multiplayer.joinRoom}
-                  onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
-                  loading={multiplayer.loading}
-                  error={multiplayer.error}
-                  room={multiplayer.room ? { roomCode: multiplayer.room.roomCode, playerCount: multiplayer.room.playerCount, maxPlayers: multiplayer.room.maxPlayers } : null}
-                  lobbyPlayers={lobbyData.length > 0 ? lobbyData : lobbyPlayers}
-                  isHost={multiplayer.room ? multiplayer.room.hostPlayerId === multiplayer.playerId : false}
-                  onStartGame={handleStartMultiplayerGame}
-                  onStartPassAndPlay={handleStartPassAndPlay}
-                  onStartSoloAI={handleStartSoloAI}
-                  onOpenDebug={() => setShowDebug(true)}
-                />
-              </MultiplayerErrorBoundary>
-            ) : !gameState ? (
-              <GameSetup
-                onStart={handleStart}
-                onOnlineClick={() => setShowMultiplayer(true)}
-                onOpenHeritage={() => setShowHeritageModal(true)}
+              {/* The Ludo Board */}
+              <LudoBoard
+                gameState={gameState}
+                movableTokens={movableTokens}
+                onTokenClick={handleTokenClick}
+                animatingToken={animatingToken}
               />
-            ) : (
-              <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:items-start py-2">
-                {/* Board Stage */}
-                <div className="flex flex-col items-center gap-4 flex-shrink-0">
-                  {/* Top Control Cluster */}
-                  <div className="flex items-center gap-3 w-full max-w-[500px] justify-between">
-                    <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
-                    <GameTimer currentPlayerColor={gameState.players[gameState.currentPlayerIndex].color} isFinished={gameState.phase === 'finished'} />
-                    <div className="flex gap-1">
-                      <button
-                        onClick={handleUndo}
-                        disabled={undoStack.length === 0 || animatingRef.current}
-                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
-                        title="Undo"
-                      >
-                        ↩️
-                      </button>
-                      <button
-                        onClick={handleRedo}
-                        disabled={redoStack.length === 0 || animatingRef.current}
-                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
-                        title="Redo"
-                      >
-                        ↪️
-                      </button>
-                      <button
-                        onClick={() => setShowHistory(h => !h)}
-                        className={`p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press ${showHistory ? 'bg-[#0066cc]/20' : ''}`}
-                        title="Turn History"
-                      >
-                        📋
-                      </button>
-                      <button
-                        onClick={() => setShowDebug(d => !d)}
-                        className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
-                        title="Debug Panel"
-                      >
-                        🐞
-                      </button>
-                    </div>
-                  </div>
 
-                  {/* The Ludo Board */}
-                  <LudoBoard
-                    gameState={gameState}
-                    movableTokens={movableTokens}
-                    onTokenClick={handleTokenClick}
-                    animatingToken={animatingToken}
-                  />
+              {/* Dice & Status Bar */}
+              <div className="flex items-center gap-4 w-full max-w-[500px] justify-center mt-1">
+                <Dice
+                  value={gameState.diceValue}
+                  isRolling={gameState.isRolling}
+                  onClick={handleRoll}
+                  disabled={gameState.phase !== 'rolling' || gameState.players[gameState.currentPlayerIndex].type !== 'human'}
+                />
 
-                  {/* Dice & Status Bar */}
-                  <div className="flex items-center gap-4 w-full max-w-[500px] justify-center mt-1">
-                    <Dice
-                      value={gameState.diceValue}
-                      isRolling={gameState.isRolling}
-                      onClick={handleRoll}
-                      disabled={gameState.phase !== 'rolling' || gameState.players[gameState.currentPlayerIndex].type !== 'human'}
-                    />
-
-                    {/* Status Message Pill */}
-                    <div className="flex-1 py-3 px-5 rounded-[20px] apple-glass border border-black/10 dark:border-white/10 text-center shadow-apple-subtle">
-                      <p className="text-[14px] font-medium text-foreground tracking-tight leading-snug">
-                        {gameState.message}
-                      </p>
-                    </div>
-
-                    {/* Rewarded Ad Boost */}
-                    {gameState.players[gameState.currentPlayerIndex].type === 'human' && gameState.phase !== 'finished' && (
-                      <div className="flex flex-col gap-1">
-                        <button
-                          onClick={handleWatchRewardedAd}
-                          disabled={rewardBusy}
-                          className="apple-pill-btn bg-amber-500 hover:bg-amber-400 text-amber-950 font-semibold text-[13px] py-2 px-3.5 shadow-sm"
-                          title="Watch Ad for Guaranteed 6"
-                        >
-                          {rewardBusy ? 'Ad...' : guaranteedSix > 0 ? `🎲 x${guaranteedSix}` : '🎲 Boost 6'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Play Again Button */}
-                  {gameState.phase === 'finished' && !showVictory && (
-                    <button
-                      onClick={() => setGameState(null)}
-                      className="apple-pill-btn bg-[#0066cc] hover:bg-[#0071e3] text-white py-3 px-8 text-[16px] shadow-sm mt-2"
-                    >
-                      Play Again
-                    </button>
-                  )}
+                {/* Status Message Pill */}
+                <div className="flex-1 py-3 px-5 rounded-[20px] apple-glass border border-black/10 dark:border-white/10 text-center shadow-apple-subtle">
+                  <p className="text-[14px] font-medium text-foreground tracking-tight leading-snug">
+                    {gameState.message}
+                  </p>
                 </div>
 
-                {/* Right Column: TypeSafe Intelligence Assistant & History */}
-                <div className="flex flex-col gap-4 w-full max-w-[380px]">
-                  {showAiAssistant && (
-                    <TypeSafeAssistantPanel
-                      evaluation={typeSafeEvaluation}
-                      onSelectToken={(tid) => {
-                        const cur = gameState.players[gameState.currentPlayerIndex];
-                        if (cur.type === 'human') handleTokenClick(cur.color, tid);
-                      }}
-                      isHumanTurn={gameState.players[gameState.currentPlayerIndex].type === 'human'}
-                      canRoll={gameState.phase === 'rolling'}
-                    />
-                  )}
+                {/* Rewarded Ad Boost */}
+                {gameState.players[gameState.currentPlayerIndex].type === 'human' && gameState.phase !== 'finished' && (
+                  <div className="flex flex-col gap-1">
+                    <button
+                      onClick={handleWatchRewardedAd}
+                      disabled={rewardBusy}
+                      className="apple-pill-btn bg-amber-500 hover:bg-amber-400 text-amber-950 font-semibold text-[13px] py-2 px-3.5 shadow-sm"
+                      title="Watch Ad for Guaranteed 6"
+                    >
+                      {rewardBusy ? 'Ad...' : guaranteedSix > 0 ? `🎲 x${guaranteedSix}` : '🎲 Boost 6'}
+                    </button>
+                  </div>
+                )}
+              </div>
 
-                  {showHistory && (
-                    <div className="rounded-[24px] apple-glass border border-black/10 dark:border-white/10 p-4 shadow-apple-subtle animate-apple-spring">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-[13px] font-semibold text-foreground uppercase tracking-wider">
-                          Turn Log
-                        </h4>
-                        <button
-                          onClick={() => setShowHistory(false)}
-                          className="text-[12px] text-muted-foreground hover:text-foreground"
-                        >
-                          Close
-                        </button>
-                      </div>
-                      <TurnHistory entries={logEntries} />
-                    </div>
-                  )}
+              {/* Play Again Button */}
+              {gameState.phase === 'finished' && !showVictory && (
+                <button
+                  onClick={() => setGameState(null)}
+                  className="apple-pill-btn bg-[#0066cc] hover:bg-[#0071e3] text-white py-3 px-8 text-[16px] shadow-sm mt-2"
+                >
+                  Play Again
+                </button>
+              )}
+            </div>
+
+            {/* Right Column: Turn History */}
+            {showHistory && (
+              <div className="flex flex-col gap-4 w-full max-w-[380px]">
+                <div className="rounded-[24px] apple-glass border border-black/10 dark:border-white/10 p-4 shadow-apple-subtle animate-apple-spring">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-[13px] font-semibold text-foreground uppercase tracking-wider">
+                      Turn Log
+                    </h4>
+                    <button
+                      onClick={() => setShowHistory(false)}
+                      className="text-[12px] text-muted-foreground hover:text-foreground"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <TurnHistory entries={logEntries} />
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
       </main>
 
-      {/* Modals */}
-      <RetroHeritageModal open={showHeritageModal} onOpenChange={setShowHeritageModal} />
+      {/* Rules Modal */}
       <RulesModal open={showRulesModal} onOpenChange={setShowRulesModal} />
 
       {/* Victory Screen */}

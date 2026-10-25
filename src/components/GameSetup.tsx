@@ -112,15 +112,11 @@ export const GameSetup: React.FC<GameSetupProps> = ({
     <div className="w-full max-w-xl mx-auto rounded-[28px] apple-glass border border-black/10 dark:border-white/10 p-6 sm:p-8 apple-elevation select-none animate-apple-spring">
       {/* Header */}
       <div className="text-center space-y-1 mb-6">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0066cc]/10 text-[#0066cc] dark:text-[#2997ff] text-[12px] font-semibold mb-1">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Apple Design & TypeSafe AI Edition</span>
-        </div>
         <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
           Ludo & Friends
         </h1>
         <p className="text-[14px] text-muted-foreground">
-          Configure player roster, choose your heritage avatars, and start your match.
+          Configure player roster, choose your avatars, and start your match.
         </p>
       </div>
 
@@ -272,19 +268,6 @@ export const GameSetup: React.FC<GameSetupProps> = ({
           )}
         </div>
       </div>
-
-      {/* Retro Heritage Link */}
-      {onOpenHeritage && (
-        <div className="mt-5 text-center">
-          <button
-            onClick={onOpenHeritage}
-            className="text-[12px] text-muted-foreground hover:text-[#0066cc] dark:hover:text-[#2997ff] transition-colors inline-flex items-center gap-1"
-          >
-            <Info className="w-3 h-3" />
-            <span>Explore 2008 J2ME Archive & Credits</span>
-          </button>
-        </div>
-      )}
     </div>
   );
 };

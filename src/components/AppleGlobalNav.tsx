@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Volume2, VolumeX, Moon, Sun, Terminal, Github } from 'lucide-react';
+import { Volume2, VolumeX, Moon, Sun, Github } from 'lucide-react';
 
 export type AppTheme = 'studio' | 'ceramic' | 'oled' | 'wood';
 
@@ -8,9 +8,6 @@ interface AppleGlobalNavProps {
   onThemeChange: (theme: AppTheme) => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
-  showAiAssistant: boolean;
-  onToggleAiAssistant: () => void;
-  onOpenHeritage: () => void;
   onOpenRules: () => void;
 }
 
@@ -19,9 +16,6 @@ export const AppleGlobalNav: React.FC<AppleGlobalNavProps> = ({
   onThemeChange,
   soundEnabled,
   onToggleSound,
-  showAiAssistant,
-  onToggleAiAssistant,
-  onOpenHeritage,
   onOpenRules,
 }) => {
   return (
@@ -35,7 +29,7 @@ export const AppleGlobalNav: React.FC<AppleGlobalNavProps> = ({
             title="Ludo & Friends Pro"
           >
             <span className="text-[17px] font-semibold leading-none"></span>
-            <span className="font-semibold tracking-tight text-[13px] hidden xs:inline">Ludo Pro</span>
+            <span className="font-semibold tracking-tight text-[13px]">Ludo Pro</span>
           </a>
 
           <nav className="hidden md:flex items-center gap-6 text-white/80">
@@ -44,22 +38,6 @@ export const AppleGlobalNav: React.FC<AppleGlobalNavProps> = ({
               className="hover:text-white transition-colors"
             >
               Game Stage
-            </button>
-            <button
-              onClick={onOpenHeritage}
-              className="hover:text-white transition-colors flex items-center gap-1"
-            >
-              <span>J2ME Heritage (2008)</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/20 text-white font-mono">Archive</span>
-            </button>
-            <button
-              onClick={onToggleAiAssistant}
-              className={`hover:text-white transition-colors flex items-center gap-1 ${
-                showAiAssistant ? 'text-[#2997ff]' : ''
-              }`}
-            >
-              <Sparkles className="w-3 h-3 text-[#2997ff]" />
-              <span>TypeSafe Intelligence</span>
             </button>
             <button
               onClick={onOpenRules}
@@ -72,20 +50,6 @@ export const AppleGlobalNav: React.FC<AppleGlobalNavProps> = ({
 
         {/* Right: Controls & Utilities */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* TypeSafe Assistant Quick Pill */}
-          <button
-            onClick={onToggleAiAssistant}
-            className={`hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium transition-all apple-press ${
-              showAiAssistant
-                ? 'bg-[#0066cc] text-white shadow-[0_0_12px_rgba(0,102,204,0.6)]'
-                : 'bg-white/10 text-white/80 hover:bg-white/20'
-            }`}
-            title="Toggle TypeSafe AI Move Assistant"
-          >
-            <Sparkles className="w-3 h-3" />
-            <span>TypeSafe AI</span>
-          </button>
-
           {/* Theme Switcher Pill */}
           <div className="flex items-center bg-white/10 rounded-full p-0.5 border border-white/10">
             <button
