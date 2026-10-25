@@ -21,13 +21,10 @@ export const AppleSubNav: React.FC<AppleSubNavProps> = ({
   return (
     <div className="sticky top-[44px] z-40 w-full h-[52px] apple-glass border-b border-black/5 dark:border-white/10 select-none">
       <div className="max-w-[1440px] h-full mx-auto px-4 sm:px-6 flex items-center justify-between">
-        {/* Left: Product title in SF Pro Display (21px, 600, tight tracking) */}
+        {/* Left: Game Title */}
         <div className="flex items-center gap-3">
           <span className="text-[20px] sm:text-[21px] font-semibold text-foreground tracking-[-0.231px]">
             Ludo & Friends
-          </span>
-          <span className="hidden sm:inline-block text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-muted-foreground">
-            Pro Edition
           </span>
         </div>
 

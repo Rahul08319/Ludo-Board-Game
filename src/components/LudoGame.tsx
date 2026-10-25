@@ -29,9 +29,9 @@ import DebugPanel from '@/components/DebugPanel';
 import { createGrant, applyGrantOnce, pendingGrants } from '@/lib/rewardGrants';
 import woodTable from '@/assets/wood-table.jpg';
 
-// Apple Design components
-import AppleGlobalNav, { type AppTheme } from '@/components/AppleGlobalNav';
-import AppleSubNav from '@/components/AppleSubNav';
+// Game Header & Theme
+import GameHeader from '@/components/GameHeader';
+import type { AppTheme } from '@/components/AppleGlobalNav';
 import { evaluateLudoMoveSystemOne } from '@/lib/typeSafeAI';
 import { RotateCcw, Volume2, VolumeX, BookOpen, Bug, ShieldAlert, Award } from 'lucide-react';
 
@@ -585,21 +585,16 @@ const LudoGame: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300" style={getBackgroundStyle()}>
-      {/*  Apple Global Navigation */}
-      <AppleGlobalNav
+      {/* Game HUD Header */}
+      <GameHeader
         currentTheme={currentTheme}
         onThemeChange={setCurrentTheme}
         soundEnabled={soundOn}
         onToggleSound={toggleSound}
         onOpenRules={() => setShowRulesModal(true)}
-      />
-
-      {/*  Apple Sub-Navigation */}
-      <AppleSubNav
+        onToggleHistory={() => setShowHistory(h => !h)}
         onNewGame={() => setGameState(null)}
         isPlaying={!!gameState}
-        onOpenRules={() => setShowRulesModal(true)}
-        onToggleHistory={() => setShowHistory(h => !h)}
       />
 
       {/* Main Surface */}

@@ -1,8 +1,8 @@
 <div align="center">
 
-#  Ludo & Friends Pro
+# Ludo & Friends
 
-### The Timeless Classic Reimagined Through Apple’s Fluid Design System, 8K Optical Fidelity & TypeSafe System One Intelligence
+### The Classic Board Game Experience
 
 <br/>
 
@@ -11,7 +11,7 @@
 
 <br/>
 
-👉 **[Launch  Ludo & Friends Pro Live](https://rahul08319.github.io/Ludo-Board-Game/)** 👈
+👉 **[Play Ludo & Friends Live](https://rahul08319.github.io/Ludo-Board-Game/)** 👈
 
 <br/>
 
