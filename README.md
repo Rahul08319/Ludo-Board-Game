@@ -4,6 +4,17 @@
 
 ### The Timeless Classic Reimagined Through Apple’s Fluid Design System, 8K Optical Fidelity & TypeSafe System One Intelligence
 
+<br/>
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Play_on_GitHub_Pages-0066CC?style=for-the-badge&logo=githubpages&logoColor=white)](https://rahul08319.github.io/Ludo-Board-Game/)
+[![Repository](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rahul08319/Ludo-Board-Game)
+
+<br/>
+
+👉 **[Launch  Ludo & Friends Pro Live](https://rahul08319.github.io/Ludo-Board-Game/)** 👈
+
+<br/>
+
 [![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
