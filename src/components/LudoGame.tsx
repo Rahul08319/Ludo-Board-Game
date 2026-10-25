@@ -29,8 +29,7 @@ import DebugPanel from '@/components/DebugPanel';
 import { createGrant, applyGrantOnce, pendingGrants } from '@/lib/rewardGrants';
 import woodTable from '@/assets/wood-table.jpg';
 
-// Game Header & Theme
-import GameHeader from '@/components/GameHeader';
+// Theme Types
 import type { AppTheme } from '@/components/AppleGlobalNav';
 import { evaluateLudoMoveSystemOne } from '@/lib/typeSafeAI';
 import { RotateCcw, Volume2, VolumeX, BookOpen, Bug, ShieldAlert, Award } from 'lucide-react';
@@ -584,21 +583,41 @@ const LudoGame: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300" style={getBackgroundStyle()}>
-      {/* Game HUD Header */}
-      <GameHeader
-        currentTheme={currentTheme}
-        onThemeChange={setCurrentTheme}
-        soundEnabled={soundOn}
-        onToggleSound={toggleSound}
-        onOpenRules={() => setShowRulesModal(true)}
-        onToggleHistory={() => setShowHistory(h => !h)}
-        onNewGame={() => setGameState(null)}
-        isPlaying={!!gameState}
-      />
+    <div className="min-h-screen w-full flex flex-col items-center justify-center p-2 sm:p-4 bg-background text-foreground transition-colors duration-300 relative select-none" style={getBackgroundStyle()}>
+      {/* Floating HUD Controls on Main Menu */}
+      {!gameState && !showMultiplayer && (
+        <div className="fixed top-3 right-3 sm:top-5 sm:right-5 z-50 flex items-center gap-2">
+          {/* Sound Toggle */}
+          <button
+            onClick={toggleSound}
+            className="p-2 sm:p-2.5 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-all apple-press shadow-sm"
+            title={soundOn ? 'Mute Sound' : 'Unmute Sound'}
+          >
+            {soundOn ? <Volume2 className="w-4 h-4 text-[#0066cc] dark:text-[#2997ff]" /> : <VolumeX className="w-4 h-4 text-muted-foreground" />}
+          </button>
 
-      {/* Main Surface */}
-      <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 w-full max-w-[1440px] mx-auto">
+          {/* Theme Switcher */}
+          <button
+            onClick={() => setCurrentTheme(currentTheme === 'studio' ? 'ceramic' : currentTheme === 'ceramic' ? 'oled' : currentTheme === 'oled' ? 'wood' : 'studio')}
+            className="p-2 sm:p-2.5 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-all apple-press shadow-sm text-sm"
+            title={`Theme: ${currentTheme.toUpperCase()}`}
+          >
+            {currentTheme === 'ceramic' ? '☀️' : currentTheme === 'wood' ? '🪵' : currentTheme === 'oled' ? '🌌' : '🌙'}
+          </button>
+
+          {/* Rules */}
+          <button
+            onClick={() => setShowRulesModal(true)}
+            className="p-2 sm:p-2.5 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-all apple-press shadow-sm"
+            title="Game Rules"
+          >
+            <BookOpen className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Main Game Stage */}
+      <main className="w-full max-w-[1200px] flex-1 flex flex-col items-center justify-center">
         {showMultiplayer && !gameState ? (
           <MultiplayerErrorBoundary
             onBack={() => { multiplayer.leaveRoom(); setShowMultiplayer(false); }}
@@ -627,14 +646,24 @@ const LudoGame: React.FC = () => {
             onOnlineClick={() => setShowMultiplayer(true)}
           />
         ) : (
-          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-6 lg:items-start py-2">
+          <div className="w-full flex flex-col items-center justify-center gap-3 sm:gap-4 py-1">
             {/* Board Stage */}
-            <div className="flex flex-col items-center gap-4 flex-shrink-0">
-              {/* Top Control Cluster */}
-              <div className="flex items-center gap-3 w-full max-w-[500px] justify-between">
-                <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
-                <GameTimer currentPlayerColor={gameState.players[gameState.currentPlayerIndex].color} isFinished={gameState.phase === 'finished'} />
-                <div className="flex gap-1">
+            <div className="flex flex-col items-center gap-3 sm:gap-4 flex-shrink-0 w-full max-w-[520px]">
+              {/* In-Game Top Control Cluster */}
+              <div className="flex items-center gap-2 w-full justify-between px-1">
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setGameState(null)}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                    title="Exit to Main Menu"
+                  >
+                    🏠
+                  </button>
+                  <PlayerPanel gameState={gameState} mentionedColors={mentionedColors} />
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <GameTimer currentPlayerColor={gameState.players[gameState.currentPlayerIndex].color} isFinished={gameState.phase === 'finished'} />
                   <button
                     onClick={handleUndo}
                     disabled={undoStack.length === 0 || animatingRef.current}
@@ -644,17 +673,30 @@ const LudoGame: React.FC = () => {
                     ↩️
                   </button>
                   <button
-                    onClick={handleRedo}
-                    disabled={redoStack.length === 0 || animatingRef.current}
-                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed apple-press"
-                    title="Redo"
+                    onClick={toggleSound}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                    title={soundOn ? 'Mute' : 'Unmute'}
                   >
-                    ↪️
+                    {soundOn ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5 text-muted-foreground" />}
+                  </button>
+                  <button
+                    onClick={() => setCurrentTheme(currentTheme === 'studio' ? 'ceramic' : currentTheme === 'ceramic' ? 'oled' : currentTheme === 'oled' ? 'wood' : 'studio')}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                    title="Change Theme"
+                  >
+                    {currentTheme === 'ceramic' ? '☀️' : currentTheme === 'wood' ? '🪵' : currentTheme === 'oled' ? '🌌' : '🌙'}
+                  </button>
+                  <button
+                    onClick={() => setShowRulesModal(true)}
+                    className="p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press"
+                    title="Game Rules"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => setShowHistory(h => !h)}
                     className={`p-2 rounded-full apple-glass border border-black/10 dark:border-white/10 text-foreground text-xs hover:bg-black/5 dark:hover:bg-white/10 transition-colors apple-press ${showHistory ? 'bg-[#0066cc]/20' : ''}`}
-                    title="Turn History"
+                    title="Turn Log"
                   >
                     📋
                   </button>
